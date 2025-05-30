@@ -1,0 +1,83 @@
+<%@ page import="java.sql.*" %>
+<%
+    String empnoStr = request.getParameter("empno");
+
+    if (empnoStr == null || empnoStr.trim().isEmpty()) {
+%>
+    <p style="color:red;">Employee number is missing from the request.</p>
+    <a href="empdisplay.jsp">Back to List</a>
+<%
+        return;
+    }
+
+    int empno = Integer.parseInt(empnoStr);
+
+    String url = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+    String user = "root";
+    String password = "";
+
+    String empname = "";
+    String doj = "";
+    String gender = "";
+    double bsalary = 0.0;
+
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "SELECT * FROM employees WHERE empno = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, empno);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    empname = rs.getString("empname");
+                    doj = rs.getDate("doj").toString();
+                    gender = rs.getString("gender");
+                    bsalary = rs.getDouble("bsalary");
+                } else {
+%>
+    <p style="color:red;">Employee not found.</p>
+    <a href="empdisplay.jsp">Back to List</a>
+<%
+                    return;
+                }
+            }
+        }
+    } catch (Exception e) {
+%>
+    <p style="color:red;">Error: <%= e.getMessage() %></p>
+    <a href="empdisplay.jsp">Back to List</a>
+<%
+        return;
+    }
+%>
+
+<html>
+<head><title>Update Employee</title></head>
+<body>
+    <h2>Update Employee</h2>
+
+    <form action="UpdateEmployeeServlet" method="post">
+        <input type="hidden" name="empno" value="<%= empno %>" />
+
+        <label>Name:</label>
+        <input type="text" name="empname" value="<%= empname %>" required /><br/><br/>
+
+        <label>Date of Joining:</label>
+        <input type="date" name="doj" value="<%= doj %>" required /><br/><br/>
+
+        <label>Gender:</label>
+        <select name="gender" required>
+            <option value="Male" <%= "Male".equals(gender) ? "selected" : "" %>>Male</option>
+            <option value="Female" <%= "Female".equals(gender) ? "selected" : "" %>>Female</option>
+        </select><br/><br/>
+
+        <label>Basic Salary:</label>
+        <input type="number" step="0.01" name="bsalary" value="<%= bsalary %>" required /><br/><br/>
+
+        <input type="submit" value="Update Employee" />
+    </form>
+
+    <br/>
+    <a href="empdisplay.jsp">Back to List</a>
+</body>
+</html>

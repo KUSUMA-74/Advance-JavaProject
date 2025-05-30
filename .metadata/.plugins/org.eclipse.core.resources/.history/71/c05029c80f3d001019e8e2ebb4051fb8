@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Web App - Home</title>
+</head>
+<body>
+
+<h1>Welcome to Employee Web App</h1>
+
+<ul>
+    <li><a href="empadd.jsp">Add Employee</a></li>
+    <li><a href="empupdate.jsp">Update Employee</a></li>
+    <li><a href="empdelete.jsp">Delete Employee</a></li>
+    <li><a href="empdisplay.jsp">Display Employees</a></li>
+    <li><a href="report_form.jsp">Generate Reports</a></li>
+</ul>
+
+</body>
+</html>

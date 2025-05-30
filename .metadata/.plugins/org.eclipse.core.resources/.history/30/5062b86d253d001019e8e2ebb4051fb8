@@ -1,0 +1,23 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html><body>
+<h2>Employee List</h2>
+<c:if test="${not empty msg}">
+    <p style="color:green;">${msg}</p>
+</c:if>
+<table border="1">
+    <tr><th>Emp No</th><th>Name</th><th>DoJ</th><th>Gender</th><th>Salary</th><th>Action</th></tr>
+    <c:forEach var="e" items="${employees}">
+        <tr>
+            <td>${e.empno}</td><td>${e.empName}</td><td>${e.doj}</td><td>${e.gender}</td><td>${e.bsalary}</td>
+            <td>
+                <form method="post" action="UpdateEmployeeServlet">
+                    <input type="hidden" name="empno" value="${e.empno}">
+                    <input type="submit" value="Update">
+                </form>
+                <a href="DeleteEmployeeServlet?empno=${e.empno}">Delete</a>
+            </td>
+        </tr>
+    </c:forEach>
+</table>
+</body></html>

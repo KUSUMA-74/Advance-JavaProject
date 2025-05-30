@@ -1,0 +1,21 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<%
+    List<Employee> reportResults = (List<Employee>) request.getAttribute("reportResults");
+%>
+<html>
+<head><title>Report Results</title></head>
+<body>
+<h2>Report Results</h2>
+
+<%
+    if (reportResults == null || reportResults.isEmpty()) {
+%>
+    <p>No results found matching criteria.</p>
+<%
+    } else {
+%>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Empno</th>
+            <th>Name</

@@ -1,0 +1,8 @@
+<form action="AddEmployeeServlet" method="post">
+    Emp No: <input name="empno" /><br/>
+    Name: <input name="empname" /><br/>
+    DOJ: <input name="doj" type="date" /><br/>
+    Gender: <select name="gender"><option>Male</option><option>Female</option></select><br/>
+    Salary: <input name="bsalary" /><br/>
+    <input type="submit" value="Add Employee" />
+</form>

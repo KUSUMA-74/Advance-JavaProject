@@ -1,0 +1,39 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.Date;
+
+@WebServlet("/UpdateEmployeeServlet")
+public class UpdateEmployeeServlet extends HttpServlet {
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int empno = Integer.parseInt(request.getParameter("empno"));
+            String empName = request.getParameter("empName");
+            String dojStr = request.getParameter("doj");
+            String gender = request.getParameter("gender");
+            double bsalary = Double.parseDouble(request.getParameter("bsalary"));
+
+            Date doj = Date.valueOf(dojStr);
+
+            Employee employee = new Employee(empno, empName, doj, gender, bsalary);
+
+            boolean success = employeeDAO.updateEmployee(employee);
+            if (success) {
+                response.sendRedirect("empdisplay.jsp");
+            } else {
+                response.getWriter().println("Error updating employee.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Error: " + e.getMessage());
+        }
+    }
+}

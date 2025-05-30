@@ -1,0 +1,52 @@
+package com.servlet;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.*;
+import java.sql.*;
+
+@WebServlet("/AddEmployeeServlet")  // This must match your form action
+public class AddEmployeeServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int empno = Integer.parseInt(request.getParameter("empno"));
+        String name = request.getParameter("name");
+        String doj = request.getParameter("doj");
+        String gender = request.getParameter("gender");
+        double salary = Double.parseDouble(request.getParameter("salary"));
+
+        String message = "";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/your_database", "your_user", "your_password");
+
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO Employee (Empno, EmpName, DoJ, Gender, Bsalary) VALUES (?, ?, ?, ?, ?)");
+            ps.setInt(1, empno);
+            ps.setString(2, name);
+            ps.setString(3, doj);
+            ps.setString(4, gender);
+            ps.setDouble(5, salary);
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                message = "Employee added successfully!";
+            } else {
+                message = "Failed to add employee.";
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            message = "Error: " + e.getMessage();
+        }
+
+        request.setAttribute("message", message);
+        RequestDispatcher rd = request.getRequestDispatcher("empadd.jsp");
+        rd.forward(request, response);
+    }
+}

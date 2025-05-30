@@ -1,0 +1,22 @@
+<html>
+<head><title>Add Employee</title></head>
+<body>
+<h2>Add Employee</h2>
+<form method="post" action="AddEmployeeServlet">
+    Emp No: <input type="text" name="empno" required><br>
+    Name: <input type="text" name="empName" required><br>
+    DoJ (YYYY-MM-DD): <input type="text" name="doj" required><br>
+    Gender: <input type="text" name="gender" required><br>
+    Salary: <input type="text" name="bsalary" required><br>
+    <input type="submit" value="Add Employee">
+</form>
+<%
+    String msg = (String) request.getAttribute("msg");
+    if (msg != null) {
+%>
+    <p style="color:green"><%= msg %></p>
+<%
+    }
+%>
+</body>
+</html>

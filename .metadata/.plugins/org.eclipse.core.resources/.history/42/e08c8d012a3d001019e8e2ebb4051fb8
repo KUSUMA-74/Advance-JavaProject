@@ -1,0 +1,62 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*, com.model.Employee" %>
+<html>
+<head>
+    <title>Employee List</title>
+    <style>
+        table { width: 90%; border-collapse: collapse; margin: auto; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .msg { color: green; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+<h2 align="center">Employee Details</h2>
+
+<%
+    String msg = (String) request.getAttribute("msg");
+    if (msg != null) {
+%>
+    <div class="msg"><%= msg %></div>
+<%
+    }
+
+    List<Employee> employees = (List<Employee>) request.getAttribute("employees");
+    if (employees != null && !employees.isEmpty()) {
+%>
+    <table>
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>DoJ</th>
+            <th>Gender</th>
+            <th>Salary</th>
+            <th>Actions</th>
+        </tr>
+<%
+        for (Employee e : employees) {
+%>
+        <tr>
+            <td><%= e.getEmpno() %></td>
+            <td><%= e.getEmpName() %></td>
+            <td><%= e.getDoj() %></td>
+            <td><%= e.getGender() %></td>
+            <td><%= e.getBsalary() %></td>
+            <td>
+                <a href="UpdateEmployeeServlet?empno=<%= e.getEmpno() %>">Update</a> |
+                <a href="DeleteEmployeeServlet?empno=<%= e.getEmpno() %>" onclick="return confirm('Delete?')">Delete</a>
+            </td>
+        </tr>
+<%
+        }
+%>
+    </table>
+<%
+    } else {
+%>
+    <p style="text-align:center;">No employees found.</p>
+<%
+    }
+%>
+</body>
+</html>

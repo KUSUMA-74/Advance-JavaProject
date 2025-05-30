@@ -1,0 +1,77 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Add Employee</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121821;
+      color: #e0e6e9;
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 191, 166, 0.3);
+    }
+    h2 {
+      color: #00bfa6;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    input[type="submit"] {
+      background-color: #00bfa6;
+      color: white;
+      margin-top: 20px;
+      cursor: pointer;
+      border: none;
+    }
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <h2>Add Employee</h2>
+  <form action="AddEmployeeServlet" method="post">
+    <label for="empno">Employee No:</label>
+    <input type="number" name="empno" required>
+
+    <label for="name">Name:</label>
+    <input type="text" name="name" required>
+
+    <label for="doj">Date of Joining:</label>
+    <input type="date" name="doj" required>
+
+    <label for="gender">Gender:</label>
+    <select name="gender" required>
+      <option value="">--Select--</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+
+    <label for="salary">Basic Salary:</label>
+    <input type="number" name="salary" step="0.01" required>
+
+    <input type="submit" value="Add Employee">
+  </form>
+
+  <div class="message">
+    <%= session.getAttribute("message") != null ? session.getAttribute("message") : "" %>
+    <%
+      session.removeAttribute("message");
+    %>
+  </div>
+</body>
+</html>

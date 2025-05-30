@@ -1,0 +1,15 @@
+@WebServlet("/DisplayEmployeeServlet")
+public class DisplayEmployeeServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        List<Employee> list = new EmployeeDAO().getAllEmployees();
+        req.setAttribute("employees", list);
+
+        HttpSession session = req.getSession(false);
+        if (session != null && session.getAttribute("msg") != null) {
+            req.setAttribute("msg", session.getAttribute("msg"));
+            session.removeAttribute("msg");
+        }
+        RequestDispatcher rd = req.getRequestDispatcher("empdisplay.jsp");
+        rd.forward(req, res);
+    }
+}

@@ -1,0 +1,45 @@
+package com.dao;
+
+import com.model.Employee;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+    private String jdbcURL = "jdbc:mysql://localhost:3306/your_database?useSSL=false&serverTimezone=UTC";
+    private String jdbcUsername = "your_username";
+    private String jdbcPassword = "your_password";
+
+    private static final String SELECT_ALL_EMPLOYEES = "SELECT * FROM Employee";
+
+    protected Connection getConnection() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+    }
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_EMPLOYEES);
+             ResultSet rs = preparedStatement.executeQuery()) {
+
+            while (rs.next()) {
+                int empno = rs.getInt("Empno");
+                String empName = rs.getString("EmpName");
+                Date doj = rs.getDate("DoJ");
+                String gender = rs.getString("Gender");
+                double bsalary = rs.getDouble("Bsalary");
+
+                Employee emp = new Employee(empno, empName, doj, gender, bsalary);
+                employees.add(emp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+}

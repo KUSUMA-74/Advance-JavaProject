@@ -1,0 +1,28 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+@WebServlet("/UpdateEmployeeServlet")
+public class UpdateEmployeeServlet extends HttpServlet {
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        int id = Integer.parseInt(req.getParameter("id"));
+        String name = req.getParameter("name");
+        String department = req.getParameter("department");
+        double salary = Double.parseDouble(req.getParameter("salary"));
+
+        Employee emp = new Employee(id, name, department, salary);
+        employeeDAO.updateEmployee(emp);
+
+        resp.sendRedirect("empdisplay.jsp");
+    }
+}

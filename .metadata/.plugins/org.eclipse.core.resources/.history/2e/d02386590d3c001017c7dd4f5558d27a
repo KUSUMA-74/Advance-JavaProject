@@ -1,0 +1,91 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/UpdateEmployeeServlet")
+public class UpdateEmployeeServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    // Change these to your actual DB config
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/your_database_name";
+    private static final String DB_USER = "your_db_user";
+    private static final String DB_PASSWORD = "your_db_password";
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Get parameters from request
+        String idStr = request.getParameter("id");
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String department = request.getParameter("department");
+        String salaryStr = request.getParameter("salary");
+
+        // Validate input
+        if (idStr == null || idStr.trim().isEmpty() ||
+            name == null || name.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            department == null || department.trim().isEmpty() ||
+            salaryStr == null || salaryStr.trim().isEmpty()) {
+
+            request.setAttribute("error", "All fields are required.");
+            request.getRequestDispatcher("empupdate.jsp").forward(request, response);
+            return;
+        }
+
+        int id = 0;
+        double salary = 0;
+
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid employee ID.");
+            request.getRequestDispatcher("empupdate.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            salary = Double.parseDouble(salaryStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid salary value.");
+            request.getRequestDispatcher("empupdate.jsp").forward(request, response);
+            return;
+        }
+
+        // Update employee record in DB
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String sql = "UPDATE employees SET name=?, email=?, department=?, salary=? WHERE id=?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, name);
+                stmt.setString(2, email);
+                stmt.setString(3, department);
+                stmt.setDouble(4, salary);
+                stmt.setInt(5, id);
+
+                int rowsUpdated = stmt.executeUpdate();
+
+                if (rowsUpdated > 0) {
+                    response.sendRedirect("empdisplay.jsp?message=Employee updated successfully");
+                } else {
+                    request.setAttribute("error", "Employee not found or update failed.");
+                    request.getRequestDispatcher("empupdate.jsp").forward(request, response);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("empupdate.jsp").forward(request, response);
+        }
+    }
+}

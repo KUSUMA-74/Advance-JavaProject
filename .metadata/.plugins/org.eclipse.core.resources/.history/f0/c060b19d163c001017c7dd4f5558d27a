@@ -1,0 +1,52 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+import com.model.Employee;
+import com.dao.EmployeeDAO;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            int empno = Integer.parseInt(request.getParameter("empno"));
+            String empname = request.getParameter("empname");
+            String dojStr = request.getParameter("doj");
+            String gender = request.getParameter("gender");
+            double bsalary = Double.parseDouble(request.getParameter("bsalary"));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date doj = sdf.parse(dojStr);
+
+            Employee emp = new Employee();
+            emp.setEmpno(empno);
+            emp.setEmpname(empname);
+            emp.setDoj(doj);
+            emp.setGender(gender);
+            emp.setBsalary(bsalary);
+
+            EmployeeDAO dao = new EmployeeDAO();
+            boolean result = dao.addEmployee(emp);
+
+            if (result) {
+                response.sendRedirect("DisplayEmployeeServlet?message=Employee added successfully");
+            } else {
+                response.sendRedirect("empadd.jsp?error=Failed to add employee");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("empadd.jsp?error=Invalid input: " + e.getMessage());
+        }
+    }
+}

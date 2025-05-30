@@ -1,0 +1,61 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int empno = Integer.parseInt(request.getParameter("empno"));
+        String name = request.getParameter("name");
+        String doj = request.getParameter("doj");
+        String gender = request.getParameter("gender");
+        double salary = Double.parseDouble(request.getParameter("salary"));
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/EmployeeDB?useSSL=false&serverTimezone=UTC",
+                    "root", "1234");
+
+            String sql = "INSERT INTO Employee (Empno, EmpName, DoJ, Gender, Bsalary) VALUES (?, ?, ?, ?, ?)";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, empno);
+            pstmt.setString(2, name);
+            pstmt.setString(3, doj);
+            pstmt.setString(4, gender);
+            pstmt.setDouble(5, salary);
+
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
+                request.setAttribute("message", "✅ Employee added successfully!");
+            } else {
+                request.setAttribute("message", "⚠️ Failed to add employee.");
+            }
+
+        } catch (Exception e) {
+            request.setAttribute("message", "❌ Error: " + e.getMessage());
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception ignored) {}
+        }
+
+        request.getRequestDispatcher("empadd.jsp").forward(request, response);
+    }
+}

@@ -1,0 +1,93 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Employee</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        td {
+            padding: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 5px;
+        }
+
+        .msg {
+            margin-top: 15px;
+        }
+
+        .msg-success {
+            color: green;
+        }
+
+        .msg-error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2>Add Employee</h2>
+
+    <form action="AddEmployeeServlet" method="get">
+        <table>
+            <tr>
+                <td>Employee Number:</td>
+                <td><input type="number" name="empno" required /></td>
+            </tr>
+            <tr>
+                <td>Employee Name:</td>
+                <td><input type="text" name="empname" required /></td>
+            </tr>
+            <tr>
+                <td>Date of Joining:</td>
+                <td><input type="date" name="doj" required /></td>
+            </tr>
+            <tr>
+                <td>Gender:</td>
+                <td>
+                    <select name="gender" required>
+                        <option value="">--Select--</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Basic Salary:</td>
+                <td><input type="number" name="bsalary" step="0.01" required /></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center;">
+                    <input type="submit" value="Add Employee" />
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div class="msg">
+    <%
+        String message = request.getParameter("message");
+        String error = request.getParameter("error");
+
+        if (message != null) {
+    %>
+        <p class="msg-success"><%= message %></p>
+    <%
+        } else if (error != null) {
+    %>
+        <p class="msg-error"><%= error %></p>
+    <%
+        }
+    %>
+    </div>
+
+    <br/>
+    <a href="empdisplay.jsp">Back to Employee List</a>
+</body>
+</html>

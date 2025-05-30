@@ -1,0 +1,33 @@
+<%@ page import="java.util.*, com.model.Employee" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head><title>Report Result</title></head>
+<body>
+    <h2>Employees with Salary above Given Threshold</h2>
+    <%
+        List<Employee> reportList = (List<Employee>) request.getAttribute("reportList");
+        if (reportList != null && !reportList.isEmpty()) {
+    %>
+    <table border="1">
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+        </tr>
+        <% for (Employee emp : reportList) { %>
+        <tr>
+            <td><%= emp.getEmpno() %></td>
+            <td><%= emp.getEmpName() %></td>
+            <td><%= emp.getDoj() %></td>
+            <td><%= emp.getGender() %></td>
+            <td><%= emp.getBsalary() %></td>
+        </tr>
+        <% } %>
+    </table>
+    <% } else { %>
+    <p>No results found.</p>
+    <% } %>
+</body>
+</html>

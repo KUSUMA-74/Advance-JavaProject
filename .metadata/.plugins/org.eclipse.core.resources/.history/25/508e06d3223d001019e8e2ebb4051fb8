@@ -1,0 +1,93 @@
+package com.dao;
+
+import com.model.Employee;
+import java.sql.*;
+import java.util.*;
+
+public class EmployeeDAO {
+    private Connection getConnection() throws Exception {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/yourdb", "root", "password");
+    }
+
+    public boolean addEmployee(Employee emp) {
+        String sql = "INSERT INTO Employee VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, emp.getEmpno());
+            ps.setString(2, emp.getEmpName());
+            ps.setString(3, emp.getDoj());
+            ps.setString(4, emp.getGender());
+            ps.setDouble(5, emp.getBsalary());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT * FROM Employee";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpno(rs.getInt("Empno"));
+                emp.setEmpName(rs.getString("EmpName"));
+                emp.setDoj(rs.getString("DoJ"));
+                emp.setGender(rs.getString("Gender"));
+                emp.setBsalary(rs.getDouble("Bsalary"));
+                list.add(emp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Employee getEmployeeById(int empno) {
+        String sql = "SELECT * FROM Employee WHERE Empno=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empno);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Employee emp = new Employee();
+                    emp.setEmpno(rs.getInt("Empno"));
+                    emp.setEmpName(rs.getString("EmpName"));
+                    emp.setDoj(rs.getString("DoJ"));
+                    emp.setGender(rs.getString("Gender"));
+                    emp.setBsalary(rs.getDouble("Bsalary"));
+                    return emp;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateEmployee(Employee emp) {
+        String sql = "UPDATE Employee SET EmpName=?, DoJ=?, Gender=?, Bsalary=? WHERE Empno=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, emp.getEmpName());
+            ps.setString(2, emp.getDoj());
+            ps.setString(3, emp.getGender());
+            ps.setDouble(4, emp.getBsalary());
+            ps.setInt(5, emp.getEmpno());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteEmployee(int empno) {
+        String sql = "DELETE FROM Employee WHERE Empno=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empno);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}

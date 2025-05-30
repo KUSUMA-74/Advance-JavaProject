@@ -1,0 +1,21 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Add Employee</title>
+</head>
+<body>
+<h2>Add New Employee</h2>
+<form action="AddEmployeeServlet" method="post">
+    Emp No: <input type="text" name="empno" required /><br/>
+    Name: <input type="text" name="empName" required /><br/>
+    Date of Joining: <input type="date" name="doj" required /><br/>
+    Gender: 
+    <select name="gender">
+        <option>Male</option>
+        <option>Female</option>
+    </select><br/>
+    Basic Salary: <input type="number" name="bsalary" step="0.01" required /><br/>
+    <input type="submit" value="Add Employee" />
+</form>
+</body>
+</html>

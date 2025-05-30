@@ -1,0 +1,152 @@
+package com.dao;
+
+import com.model.Employee;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+
+    private String jdbcURL = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+    private String jdbcUsername = "root";
+    private String jdbcPassword = "rootpassword";
+
+    private static final String INSERT_EMPLOYEE_SQL = "INSERT INTO employees (name, department, salary) VALUES (?, ?, ?);";
+    private static final String SELECT_EMPLOYEE_BY_ID = "SELECT id, name, department, salary FROM employees WHERE id = ?;";
+    private static final String SELECT_ALL_EMPLOYEES = "SELECT * FROM employees;";
+    private static final String DELETE_EMPLOYEE_SQL = "DELETE FROM employees WHERE id = ?;";
+    private static final String UPDATE_EMPLOYEE_SQL = "UPDATE employees SET name = ?, department = ?, salary = ? WHERE id = ?;";
+    private static final String SELECT_EMPLOYEES_BY_CRITERIA = 
+        "SELECT * FROM employees WHERE (? IS NULL OR department = ?) AND (? IS NULL OR salary >= ?);";
+
+    protected Connection getConnection() throws SQLException {
+        Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+        return connection;
+    }
+
+    public void addEmployee(Employee employee) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_EMPLOYEE_SQL)) {
+            preparedStatement.setString(1, employee.getName());
+            preparedStatement.setString(2, employee.getDepartment());
+            preparedStatement.setDouble(3, employee.getSalary());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+    }
+
+    public Employee getEmployeeById(int id) {
+        Employee emp = null;
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_EMPLOYEE_BY_ID)) {
+            preparedStatement.setInt(1, id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                String name = rs.getString("name");
+                String dept = rs.getString("department");
+                double salary = rs.getDouble("salary");
+                emp = new Employee(id, name, dept, salary);
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return emp;
+    }
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_EMPLOYEES)) {
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String dept = rs.getString("department");
+                double salary = rs.getDouble("salary");
+                employees.add(new Employee(id, name, dept, salary));
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return employees;
+    }
+
+    public void updateEmployee(Employee employee) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE_SQL)) {
+            preparedStatement.setString(1, employee.getName());
+            preparedStatement.setString(2, employee.getDepartment());
+            preparedStatement.setDouble(3, employee.getSalary());
+            preparedStatement.setInt(4, employee.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+    }
+
+    public void deleteEmployee(int id) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_EMPLOYEE_SQL)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+    }
+
+    public List<Employee> getEmployeesByCriteria(String department, Double minSalary) {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_EMPLOYEES_BY_CRITERIA)) {
+
+            if (department == null || department.trim().isEmpty()) {
+                preparedStatement.setNull(1, Types.VARCHAR);
+                preparedStatement.setNull(2, Types.VARCHAR);
+            } else {
+                preparedStatement.setString(1, department);
+                preparedStatement.setString(2, department);
+            }
+
+            if (minSalary == null) {
+                preparedStatement.setNull(3, Types.DOUBLE);
+                preparedStatement.setNull(4, Types.DOUBLE);
+            } else {
+                preparedStatement.setDouble(3, minSalary);
+                preparedStatement.setDouble(4, minSalary);
+            }
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String dept = rs.getString("department");
+                double salary = rs.getDouble("salary");
+                employees.add(new Employee(id, name, dept, salary));
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return employees;
+    }
+
+    private void printSQLException(SQLException ex) {
+        for (Throwable e : ex) {
+            if (e instanceof SQLException) {
+                e.printStackTrace(System.err);
+                System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+                System.err.println("Error Code: " + ((SQLException) e).getErrorCode());
+                System.err.println("Message: " + e.getMessage());
+                Throwable t = ex.getCause();
+                while (t != null) {
+                    System.err.println("Cause: " + t);
+                    t = t.getCause();
+                }
+            }
+        }
+    }
+}

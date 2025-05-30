@@ -1,0 +1,21 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/ReportServlet")
+public class ReportServlet extends HttpServlet {
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // This servlet will just forward to report_form.jsp (the report criteria page)
+        req.getRequestDispatcher("report_form.jsp").forward(req, resp);
+    }
+}

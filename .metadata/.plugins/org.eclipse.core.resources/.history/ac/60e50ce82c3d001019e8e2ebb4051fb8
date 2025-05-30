@@ -1,0 +1,63 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Employee</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121821;
+      color: #e0e6e9;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 191, 166, 0.4);
+    }
+    h2 {
+      color: #00bfa6;
+      text-align: center;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background: #cc0000;
+    }
+    .msg {
+      color: yellow;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Delete Employee</h2>
+  <form action="DeleteEmployeeServlet" method="post">
+    <label>Enter Employee Number to Delete:</label>
+    <input type="number" name="empno" required />
+    <input type="submit" value="Delete Employee" />
+  </form>
+
+  <div class="msg">
+    <%= request.getAttribute("message") != null ? request.getAttribute("message") : "" %>
+  </div>
+</body>
+</html>

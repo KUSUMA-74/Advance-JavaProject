@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Criteria</title>
+</head>
+<body>
+
+<h2>Select Report Criteria</h2>
+
+<form action="ReportCriteriaServlet" method="post">
+
+    <label>Department:</label><br/>
+    <input type="text" name="department" /><br/><br/>
+
+    <label>Gender:</label><br/>
+    <select name="gender">
+        <option value="">-- Any --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select><br/><br/>
+
+    <label>Start Date (Date of Joining):</label><br/>
+    <input type="date" name="startDate" /><br/><br/>
+
+    <label>End Date (Date of Joining):</label><br/>
+    <input type="date" name="endDate" /><br/><br/>
+
+    <input type="submit" value="Generate Report" />
+
+</form>
+
+<br/>
+<a href="index.jsp">Back to Home</a>
+
+</body>
+</html>

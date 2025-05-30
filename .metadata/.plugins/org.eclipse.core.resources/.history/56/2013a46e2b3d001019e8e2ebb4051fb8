@@ -1,0 +1,58 @@
+package com.servlet;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int empno = Integer.parseInt(request.getParameter("empno"));
+        String name = request.getParameter("name");
+        String doj = request.getParameter("doj");
+        String gender = request.getParameter("gender");
+        double salary = Double.parseDouble(request.getParameter("salary"));
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // ✅ Update these if you use a different user
+            conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/EmployeeDB?useSSL=false&serverTimezone=UTC",
+                "root", "1234"
+            );
+
+            String sql = "INSERT INTO Employee (Empno, EmpName, DoJ, Gender, Bsalary) VALUES (?, ?, ?, ?, ?)";
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, empno);
+            stmt.setString(2, name);
+            stmt.setString(3, doj);
+            stmt.setString(4, gender);
+            stmt.setDouble(5, salary);
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                request.setAttribute("message", "✅ Employee added successfully!");
+            } else {
+                request.setAttribute("message", "⚠️ Failed to add employee.");
+            }
+
+        } catch (Exception e) {
+            request.setAttribute("message", "❌ Error: " + e.getMessage());
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception ignored) {}
+        }
+
+        request.getRequestDispatcher("empadd.jsp").forward(request, response);
+    }
+}

@@ -1,0 +1,39 @@
+package com.servlet;
+
+import com.model.Employee;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
+import java.util.*;
+
+@WebServlet("/DisplayEmployeeServlet")
+public class DisplayEmployeeServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Employee> list = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/EmployeeDB", "root", "");
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM Employee");
+
+            while (rs.next()) {
+                Employee e = new Employee();
+                e.setEmpno(rs.getInt(1));
+                e.setEmpName(rs.getString(2));
+                e.setDoj(rs.getString(3));
+                e.setGender(rs.getString(4));
+                e.setBsalary(rs.getDouble(5));
+                list.add(e);
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        request.setAttribute("employees", list);
+        RequestDispatcher rd = request.getRequestDispatcher("empdisplay.jsp");
+        rd.forward(request, response);
+    }
+}

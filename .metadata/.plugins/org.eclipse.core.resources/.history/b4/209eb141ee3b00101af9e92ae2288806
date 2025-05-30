@@ -1,0 +1,34 @@
+<%@ page import="java.util.*, com.model.Employee" %>
+<%
+    List<Employee> employees = (List<Employee>) request.getAttribute("reportData");
+%>
+<html>
+<head><title>Report Result</title></head>
+<body>
+    <h2>Employees with Salary Above Selected Amount</h2>
+    <table border="1">
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+        </tr>
+        <%
+            if (employees != null) {
+                for (Employee emp : employees) {
+        %>
+        <tr>
+            <td><%= emp.getEmpno() %></td>
+            <td><%= emp.getEmpname() %></td>
+            <td><%= emp.getDoj() %></td>
+            <td><%= emp.getGender() %></td>
+            <td><%= emp.getBsalary() %></td>
+        </tr>
+        <%
+                }
+            }
+        %>
+    </table>
+</body>
+</html>

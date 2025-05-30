@@ -1,0 +1,45 @@
+package com.servlet;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
+
+@WebServlet("/UpdateEmployeeServlet")
+public class UpdateEmployeeServlet extends HttpServlet {
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
+    private static final String DB_USER = "root";
+    private static final String DB_PASS = "";
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int empno = Integer.parseInt(request.getParameter("empno"));
+        String name = request.getParameter("name");
+        String doj = request.getParameter("doj");
+        String gender = request.getParameter("gender");
+        double salary = Double.parseDouble(request.getParameter("salary"));
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+
+            String sql = "UPDATE Employee SET EmpName=?, DoJ=?, Gender=?, Bsalary=? WHERE Empno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, name);
+            ps.setString(2, doj);
+            ps.setString(3, gender);
+            ps.setDouble(4, salary);
+            ps.setInt(5, empno);
+
+            ps.executeUpdate();
+            response.sendRedirect("empdisplay.jsp");
+
+            ps.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Update failed: " + e.getMessage());
+        }
+    }
+}

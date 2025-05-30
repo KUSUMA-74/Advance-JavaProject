@@ -1,0 +1,69 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+    private static final String DB_USER = "empuser";
+    private static final String DB_PASSWORD = "password123";
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "JDBC Driver not found.");
+            request.getRequestDispatcher("empadd.jsp").forward(request, response);
+            return;
+        }
+
+        int empno = Integer.parseInt(request.getParameter("empno"));
+        String empname = request.getParameter("empname");
+        Date doj = Date.valueOf(request.getParameter("doj")); // yyyy-MM-dd expected
+        String gender = request.getParameter("gender");
+        double bsalary = Double.parseDouble(request.getParameter("bsalary"));
+
+        String sql = "INSERT INTO employees (empno, empname, doj, gender, bsalary) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, empno);
+            stmt.setString(2, empname);
+            stmt.setDate(3, doj);
+            stmt.setString(4, gender);
+            stmt.setDouble(5, bsalary);
+
+            int rows = stmt.executeUpdate();
+
+            if (rows > 0) {
+                response.sendRedirect("empdisplay.jsp"); // redirect to list page after success
+            } else {
+                request.setAttribute("error", "Failed to add employee.");
+                request.getRequestDispatcher("empadd.jsp").forward(request, response);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("empadd.jsp").forward(request, response);
+        }
+    }
+}

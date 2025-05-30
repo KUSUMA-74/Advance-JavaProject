@@ -1,0 +1,16 @@
+public boolean addEmployee(Employee emp) {
+    String sql = "INSERT INTO employees (empno, empname, doj, gender, bsalary) VALUES (?, ?, ?, ?, ?)";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, emp.getEmpno());
+        stmt.setString(2, emp.getEmpname());
+        stmt.setDate(3, new java.sql.Date(emp.getDoj().getTime()));
+        stmt.setString(4, emp.getGender());
+        stmt.setDouble(5, emp.getBsalary());
+        return stmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}

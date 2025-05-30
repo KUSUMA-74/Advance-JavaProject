@@ -1,0 +1,31 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.dao.EmployeeDAO, com.model.Employee" %>
+<%
+    String idStr = request.getParameter("id");
+    EmployeeDAO dao = new EmployeeDAO();
+    if (idStr != null) {
+        dao.deleteEmployee(Integer.parseInt(idStr));
+        response.sendRedirect("empdelete.jsp");
+        return;
+    }
+%>
+<html>
+<head><title>Delete Employee</title></head>
+<body>
+<h2>Delete Employee</h2>
+
+<ul>
+<%
+    for(Employee e : dao.getAllEmployees()) {
+%>
+    <li>
+        <%= e.getName() %> - <a href="empdelete.jsp?id=<%= e.getId() %>">Delete</a>
+    </li>
+<%
+    }
+%>
+</ul>
+
+<a href="index.jsp">Back to Home</a>
+</body>
+</html>

@@ -1,0 +1,37 @@
+package com.dao;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.model.Employee;
+
+public class EmployeeDAO {
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT empno, empname, doj, gender, bsalary FROM employees";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpno(rs.getInt("empno"));
+                emp.setEmpname(rs.getString("empname"));
+                emp.setDoj(rs.getDate("doj"));
+                emp.setGender(rs.getString("gender"));
+                emp.setBsalary(rs.getDouble("bsalary"));
+                list.add(emp);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // You can later add more methods: addEmployee, updateEmployee, deleteEmployee, etc.
+}

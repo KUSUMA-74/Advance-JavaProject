@@ -1,0 +1,4 @@
+<form action="DeleteEmployeeServlet" method="post">
+    Emp No: <input name="empno" /><br/>
+    <input type="submit" value="Delete Employee" />
+</form>

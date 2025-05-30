@@ -1,0 +1,42 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+@WebServlet("/DeleteEmployeeServlet")
+public class DeleteEmployeeServlet extends HttpServlet {
+
+    private EmployeeDAO dao;
+
+    @Override
+    public void init() {
+        dao = new EmployeeDAO();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            int empno = Integer.parseInt(request.getParameter("empno"));
+            boolean deleted = dao.deleteEmployee(empno);
+
+            HttpSession session = request.getSession();
+            if (deleted) {
+                session.setAttribute("message", "✅ Employee deleted successfully.");
+            } else {
+                session.setAttribute("message", "⚠️ Employee not found or could not be deleted.");
+            }
+
+            response.sendRedirect("displayEmployees");
+
+        } catch (Exception e) {
+            request.setAttribute("message", "Error: " + e.getMessage());
+            request.getRequestDispatcher("displayEmployees").forward(request, response);
+        }
+    }
+}

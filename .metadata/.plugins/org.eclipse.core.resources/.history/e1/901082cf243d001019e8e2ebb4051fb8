@@ -1,0 +1,34 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+@WebServlet("/UpdateEmployeeServlet")
+public class UpdateEmployeeServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        int empno = Integer.parseInt(req.getParameter("empno"));
+        Employee emp = new EmployeeDAO().getEmployeeById(empno);
+        req.setAttribute("emp", emp);
+        req.getRequestDispatcher("empupdate.jsp").forward(req, res);
+    }
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Employee emp = new Employee();
+        emp.setEmpno(Integer.parseInt(req.getParameter("empno")));
+        emp.setEmpName(req.getParameter("empName"));
+        emp.setDoj(req.getParameter("doj"));
+        emp.setGender(req.getParameter("gender"));
+        emp.setBsalary(Double.parseDouble(req.getParameter("bsalary")));
+
+        boolean status = new EmployeeDAO().updateEmployee(emp);
+
+        HttpSession session = req.getSession();
+        session.setAttribute("msg", status ? "Employee updated successfully!" : "Update failed.");
+
+        res.sendRedirect("DisplayEmployeeServlet");
+    }
+}

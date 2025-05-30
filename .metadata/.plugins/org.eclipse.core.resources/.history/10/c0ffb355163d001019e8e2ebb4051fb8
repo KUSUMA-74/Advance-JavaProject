@@ -1,0 +1,37 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/ReportCriteriaServlet")
+public class ReportCriteriaServlet extends HttpServlet {
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String empName = request.getParameter("empName");
+        String minSalaryStr = request.getParameter("minSalary");
+
+        Double minSalary = null;
+        if (minSalaryStr != null && !minSalaryStr.trim().isEmpty()) {
+            try {
+                minSalary = Double.parseDouble(minSalaryStr);
+            } catch (NumberFormatException e) {
+                minSalary = null;
+            }
+        }
+
+        List<Employee> reportResults = employeeDAO.getEmployeesByCriteria(empName, minSalary);
+        request.setAttribute("reportResults", reportResults);
+        request.getRequestDispatcher("report_result.jsp").forward(request, response);
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("report_form.jsp").forward(request, response);
+    }
+}

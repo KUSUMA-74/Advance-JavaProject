@@ -1,0 +1,90 @@
+<%@ page import="java.util.*, com.model.Employee" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Employee Report Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f3f3f3;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 90%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #0073e6;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        a.button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #0073e6;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        a.button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Employee Report - Filtered Results</h2>
+
+<%
+    List<Employee> empList = (List<Employee>) request.getAttribute("empList");
+    if (empList == null || empList.isEmpty()) {
+%>
+    <p>No employees found for the given salary range.</p>
+<%
+    } else {
+%>
+    <table>
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+        </tr>
+        <%
+            for (Employee emp : empList) {
+        %>
+            <tr>
+                <td><%= emp.getEmpno() %></td>
+                <td><%= emp.getName() %></td>
+                <td><%= emp.getDoj() %></td>
+                <td><%= emp.getGender() %></td>
+                <td><%= emp.getSalary() %></td>
+            </tr>
+        <%
+            }
+        %>
+    </table>
+<%
+    }
+%>
+
+<br>
+<a href="report_form.jsp" class="button">Back to Report Form</a>
+<a href="index.jsp" class="button">Home</a>
+
+</body>
+</html>

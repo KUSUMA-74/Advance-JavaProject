@@ -1,0 +1,31 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Employee emp = new Employee();
+        emp.setEmpno(Integer.parseInt(req.getParameter("empno")));
+        emp.setEmpName(req.getParameter("empName"));
+        emp.setDoj(req.getParameter("doj"));
+        emp.setGender(req.getParameter("gender"));
+        emp.setBsalary(Double.parseDouble(req.getParameter("bsalary")));
+
+        EmployeeDAO dao = new EmployeeDAO();
+        boolean success = dao.addEmployee(emp);
+
+        HttpSession session = req.getSession();
+        if (success) {
+            session.setAttribute("msg", "Employee successfully created.");
+        } else {
+            session.setAttribute("msg", "Failed to add employee.");
+        }
+        res.sendRedirect("DisplayEmployeeServlet");
+    }
+}

@@ -1,0 +1,14 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head><title>Add Employee</title></head>
+<body>
+<h2>Add New Employee</h2>
+<form action="AddEmployeeServlet" method="post">
+    Name: <input type="text" name="name" required/><br/>
+    Department: <input type="text" name="department" required/><br/>
+    Salary: <input type="number" name="salary" required/><br/>
+    <input type="submit" value="Add Employee"/>
+</form>
+<a href="index.jsp">Back to Home</a>
+</body>
+</html>

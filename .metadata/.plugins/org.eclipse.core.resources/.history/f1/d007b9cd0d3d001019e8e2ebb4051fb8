@@ -1,0 +1,62 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+import com.model.Employee;
+
+@WebServlet("/DisplayEmployeeServlet")
+public class DisplayEmployeeServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        ArrayList<Employee> employeeList = new ArrayList<>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            request.setAttribute("error", "JDBC Driver not found.");
+            request.getRequestDispatcher("empdisplay.jsp").forward(request, response);
+            return;
+        }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String sql = "SELECT empno, empname, doj, gender, bsalary FROM employees";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Employee emp = new Employee();
+                    emp.setEmpno(rs.getInt("empno"));
+                    emp.setEmpname(rs.getString("empname"));
+                    emp.setDoj(rs.getDate("doj"));
+                    emp.setGender(rs.getString("gender"));
+                    emp.setBsalary(rs.getDouble("bsalary"));
+                    employeeList.add(emp);
+                }
+            }
+        } catch (SQLException e) {
+            request.setAttribute("error", "Database error: " + e.getMessage());
+        }
+
+        // Pass messages from URL to JSP
+        request.setAttribute("employeeList", employeeList);
+        request.setAttribute("message", request.getParameter("message"));
+        request.setAttribute("error", request.getParameter("error"));
+
+        request.getRequestDispatcher("empdisplay.jsp").forward(request, response);
+    }
+}

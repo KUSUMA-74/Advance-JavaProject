@@ -1,0 +1,32 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/ReportCriteriaServlet")
+public class ReportCriteriaServlet extends HttpServlet {
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        String department = req.getParameter("department");
+        String minSalaryStr = req.getParameter("minSalary");
+
+        Double minSalary = null;
+        if (minSalaryStr != null && !minSalaryStr.trim().isEmpty()) {
+            minSalary = Double.parseDouble(minSalaryStr);
+        }
+
+        List<Employee> filteredEmployees = employeeDAO.getEmployeesByCriteria(department, minSalary);
+
+        req.setAttribute("reportResults", filteredEmployees);
+        req.getRequestDispatcher("report_result.jsp").forward(req, resp);
+    }
+}

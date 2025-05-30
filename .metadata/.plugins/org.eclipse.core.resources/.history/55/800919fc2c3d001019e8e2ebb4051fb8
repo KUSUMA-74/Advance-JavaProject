@@ -1,0 +1,36 @@
+package com.servlet;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
+
+@WebServlet("/DeleteEmployeeServlet")
+public class DeleteEmployeeServlet extends HttpServlet {
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/test";
+    private static final String DB_USER = "root";
+    private static final String DB_PASS = "";
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int empno = Integer.parseInt(request.getParameter("empno"));
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM Employee WHERE Empno = ?");
+            stmt.setInt(1, empno);
+            stmt.executeUpdate();
+
+            response.sendRedirect("empdisplay.jsp");
+
+            stmt.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Error deleting employee: " + e.getMessage());
+        }
+    }
+}

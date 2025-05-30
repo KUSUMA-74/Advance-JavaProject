@@ -1,0 +1,51 @@
+=package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    private EmployeeDAO dao;
+
+    public void init() {
+        dao = new EmployeeDAO();
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            int empno = Integer.parseInt(request.getParameter("empno"));
+            String name = request.getParameter("name");
+            String doj = request.getParameter("doj");
+            String gender = request.getParameter("gender");
+            double salary = Double.parseDouble(request.getParameter("salary"));
+
+            Employee newEmp = new Employee(empno, name, doj, gender, salary);
+
+            boolean success = dao.addEmployee(newEmp);
+
+            HttpSession session = request.getSession();
+            if (success) {
+                session.setAttribute("message", "✅ Employee added successfully!");
+            } else {
+                session.setAttribute("message", "⚠️ Failed to add employee.");
+            }
+
+            response.sendRedirect("displayEmployees");
+
+        } catch (Exception e) {
+            // Log the exception for debugging (optional)
+            e.printStackTrace();
+
+            request.setAttribute("message", "❌ Error occurred: " + e.getMessage());
+            RequestDispatcher dispatcher = request.getRequestDispatcher("empadd.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+}

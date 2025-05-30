@@ -1,0 +1,70 @@
+<%@ page import="java.sql.*" %>
+<%
+    int empno = Integer.parseInt(request.getParameter("empno"));
+    String name = "", doj = "", gender = "";
+    double salary = 0;
+
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "");
+        PreparedStatement ps = conn.prepareStatement("SELECT * FROM Employee WHERE Empno = ?");
+        ps.setInt(1, empno);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            name = rs.getString("EmpName");
+            doj = rs.getString("DoJ");
+            gender = rs.getString("Gender");
+            salary = rs.getDouble("Bsalary");
+        }
+        conn.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+%>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Employee</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #121821;
+      color: #e0e6e9;
+      padding: 40px;
+    }
+    form {
+      background: #1e2a38;
+      padding: 20px;
+      border-radius: 8px;
+      width: 400px;
+      margin: auto;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+    }
+    input[type=submit] {
+      background-color: #00bfa6;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Update Employee</h2>
+  <form action="UpdateEmployeeServlet" method="post">
+    <input type="hidden" name="empno" value="<%= empno %>">
+    Name: <input type="text" name="name" value="<%= name %>" required>
+    Date of Joining: <input type="date" name="doj" value="<%= doj %>" required>
+    Gender:
+    <select name="gender">
+      <option value="Male" <%= gender.equals("Male") ? "selected" : "" %>>Male</option>
+      <option value="Female" <%= gender.equals("Female") ? "selected" : "" %>>Female</option>
+    </select>
+    Basic Salary: <input type="number" step="0.01" name="salary" value="<%= salary %>" required>
+    <input type="submit" value="Update">
+  </form>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<html>
+<head><title>Display Employee</title></head>
+<body>
+    <h2>Display Employee</h2>
+    <form action="DisplayEmployeeServlet" method="post">
+        Emp No: <input type="number" name="empno" required><br>
+        <input type="submit" value="Display">
+    </form>
+</body>
+</html>

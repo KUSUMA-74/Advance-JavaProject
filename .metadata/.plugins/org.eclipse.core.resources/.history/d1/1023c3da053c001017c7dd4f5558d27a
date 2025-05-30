@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Employee</title>
+</head>
+<body>
+
+<h2>Delete Employee</h2>
+
+<form action="DeleteEmployeeServlet" method="post">
+    <label>Employee No to Delete:</label><br/>
+    <input type="number" name="empno" required /><br/><br/>
+
+    <input type="submit" value="Delete Employee" />
+</form>
+
+<br/>
+<a href="index.jsp">Back to Home</a>
+
+</body>
+</html>

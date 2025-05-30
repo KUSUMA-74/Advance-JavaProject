@@ -1,0 +1,126 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*, java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee List</title>
+    <style>
+        body {
+            background-color: #121821;
+            color: #e0e6e9;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #00bfa6;
+        }
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            background-color: #1e2a38;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #2e3c50;
+        }
+        th {
+            background-color: #00bfa6;
+            color: black;
+        }
+        td {
+            color: #e0e6e9;
+        }
+        a {
+            margin: 20px 10px;
+            color: #00e6b8;
+            text-decoration: none;
+        }
+        .message {
+            margin-top: 20px;
+            color: #00e676;
+        }
+        .error {
+            margin-top: 20px;
+            color: #ff5252;
+        }
+    </style>
+</head>
+<body>
+    <h2>Employee List</h2>
+
+    <%
+        String message = request.getParameter("message");
+        String error = request.getParameter("error");
+        if (message != null) {
+    %>
+        <p class="message"><%= message %></p>
+    <%
+        } else if (error != null) {
+    %>
+        <p class="error"><%= error %></p>
+    <%
+        }
+
+        String dbURL = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+        String dbUser = "root";
+        String dbPass = ""; // Your password
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM employees");
+
+            if (!rs.isBeforeFirst()) {
+                out.println("<p class='error'>No employees found.</p>");
+            } else {
+    %>
+    <table>
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+        </tr>
+    <%
+                while (rs.next()) {
+    %>
+        <tr>
+            <td><%= rs.getInt("empno") %></td>
+            <td><%= rs.getString("empname") %></td>
+            <td><%= rs.getString("doj") %></td>
+            <td><%= rs.getString("gender") %></td>
+            <td><%= rs.getDouble("bsalary") %></td>
+        </tr>
+    <%
+                }
+    %>
+    </table>
+    <%
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            out.println("<p class='error'>Error: " + e.getMessage() + "</p>");
+        }
+    %>
+
+    <div>
+        <a href="empadd.jsp">Add Employee</a> |
+        <a href="empupdate.jsp">Update Employee</a> |
+        <a href="empdelete.jsp">Delete Employee</a> |
+        <a href="report_form.jsp">Reports</a>
+    </div>
+</body>
+</html>

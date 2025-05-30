@@ -1,0 +1,91 @@
+package com.dao;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import com.model.Employee;
+
+public class EmployeeDAO {
+    private final String jdbcURL = "jdbc:mysql://localhost:3306/your_database_name";
+    private final String jdbcUsername = "root";  // Change to your MySQL username
+    private final String jdbcPassword = "your_password"; // Change to your MySQL password
+
+    private Connection getConnection() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Ensure driver is loaded
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("MySQL Driver not found", e);
+        }
+        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+    }
+
+    public void insertEmployee(Employee emp) throws SQLException {
+        String sql = "INSERT INTO employee (empno, empname, doj, gender, bsalary) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, emp.getEmpno());
+            ps.setString(2, emp.getEmpname());
+            ps.setDate(3, emp.getDoj());
+            ps.setString(4, emp.getGender());
+            ps.setDouble(5, emp.getBsalary());
+            ps.executeUpdate();
+        }
+    }
+
+    public void updateEmployee(Employee emp) throws SQLException {
+        String sql = "UPDATE employee SET empname=?, doj=?, gender=?, bsalary=? WHERE empno=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, emp.getEmpname());
+            ps.setDate(2, emp.getDoj());
+            ps.setString(3, emp.getGender());
+            ps.setDouble(4, emp.getBsalary());
+            ps.setInt(5, emp.getEmpno());
+            ps.executeUpdate();
+        }
+    }
+
+    public void deleteEmployee(int empno) throws SQLException {
+        String sql = "DELETE FROM employee WHERE empno=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empno);
+            ps.executeUpdate();
+        }
+    }
+
+    public Employee getEmployee(int empno) throws SQLException {
+        String sql = "SELECT * FROM employee WHERE empno=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empno);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Employee(
+                    rs.getInt("empno"),
+                    rs.getString("empname"),
+                    rs.getDate("doj"),
+                    rs.getString("gender"),
+                    rs.getDouble("bsalary")
+                );
+            }
+        }
+        return null;
+    }
+
+    public List<Employee> getEmployeesByMinSalary(double minSalary) throws SQLException {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT * FROM employee WHERE bsalary >= ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, minSalary);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employee emp = new Employee(
+                    rs.getInt("empno"),
+                    rs.getString("empname"),
+                    rs.getDate("doj"),
+                    rs.getString("gender"),
+                    rs.getDouble("bsalary")
+                );
+                list.add(emp);
+            }
+        }
+        return list;
+    }
+}

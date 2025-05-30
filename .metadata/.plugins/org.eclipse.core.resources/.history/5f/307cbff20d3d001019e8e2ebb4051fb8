@@ -1,0 +1,121 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Date;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.model.Employee;
+
+@WebServlet("/ReportCriteriaServlet")
+public class ReportCriteriaServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    // Update these with your actual DB details
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/your_database_name?useSSL=false&serverTimezone=UTC";
+    private static final String DB_USER = "your_db_user";
+    private static final String DB_PASSWORD = "your_db_password";
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String dept = request.getParameter("department");
+        String gender = request.getParameter("gender");
+        String startDateStr = request.getParameter("startDate");
+        String endDateStr = request.getParameter("endDate");
+
+        Date startDate = null;
+        Date endDate = null;
+
+        try {
+            if (startDateStr != null && !startDateStr.isEmpty()) {
+                startDate = Date.valueOf(startDateStr);  // expects yyyy-MM-dd
+            }
+            if (endDateStr != null && !endDateStr.isEmpty()) {
+                endDate = Date.valueOf(endDateStr);
+            }
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("error", "Invalid date format.");
+            request.getRequestDispatcher("report_form.jsp").forward(request, response);
+            return;
+        }
+
+        ArrayList<Employee> filteredEmployees = new ArrayList<>();
+
+        try {
+            // Load MySQL JDBC Driver explicitly (optional for newer JDBC versions)
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+                StringBuilder sql = new StringBuilder(
+                        "SELECT empno, empname, doj, gender, bsalary FROM employees WHERE 1=1");
+
+                if (dept != null && !dept.trim().isEmpty()) {
+                    sql.append(" AND department = ?");
+                }
+                if (gender != null && !gender.trim().isEmpty()) {
+                    sql.append(" AND gender = ?");
+                }
+                if (startDate != null) {
+                    sql.append(" AND doj >= ?");
+                }
+                if (endDate != null) {
+                    sql.append(" AND doj <= ?");
+                }
+
+                PreparedStatement stmt = conn.prepareStatement(sql.toString());
+
+                int paramIndex = 1;
+                if (dept != null && !dept.trim().isEmpty()) {
+                    stmt.setString(paramIndex++, dept);
+                }
+                if (gender != null && !gender.trim().isEmpty()) {
+                    stmt.setString(paramIndex++, gender);
+                }
+                if (startDate != null) {
+                    stmt.setDate(paramIndex++, startDate);
+                }
+                if (endDate != null) {
+                    stmt.setDate(paramIndex++, endDate);
+                }
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Employee emp = new Employee();
+                        emp.setEmpno(rs.getInt("empno"));
+                        emp.setEmpname(rs.getString("empname"));
+                        emp.setDoj(rs.getDate("doj"));
+                        emp.setGender(rs.getString("gender"));
+                        emp.setBsalary(rs.getDouble("bsalary"));
+
+                        filteredEmployees.add(emp);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "MySQL Driver not found: " + e.getMessage());
+            request.getRequestDispatcher("report_form.jsp").forward(request, response);
+            return;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("report_form.jsp").forward(request, response);
+            return;
+        }
+
+        request.setAttribute("employeeList", filteredEmployees);
+        request.getRequestDispatcher("report_result.jsp").forward(request, response);
+    }
+}

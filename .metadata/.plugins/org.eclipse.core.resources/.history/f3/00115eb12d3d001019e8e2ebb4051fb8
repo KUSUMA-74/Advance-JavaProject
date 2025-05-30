@@ -1,0 +1,75 @@
+<%@ page import="java.sql.*, java.util.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Display Employees</title>
+  <style>
+    body {
+      background-color: #121821;
+      color: #e0e6e9;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #1e2a38;
+      color: #fff;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #00bfa6;
+      text-align: center;
+    }
+    th {
+      background-color: #00bfa6;
+    }
+    a {
+      color: #00e6b8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>All Employees</h2>
+  <table>
+    <tr>
+      <th>Emp No</th>
+      <th>Name</th>
+      <th>DOJ</th>
+      <th>Gender</th>
+      <th>Salary</th>
+      <th>Actions</th>
+    </tr>
+    <%
+      try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "");
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM Employee");
+
+        while (rs.next()) {
+    %>
+      <tr>
+        <td><%= rs.getInt("Empno") %></td>
+        <td><%= rs.getString("EmpName") %></td>
+        <td><%= rs.getDate("DoJ") %></td>
+        <td><%= rs.getString("Gender") %></td>
+        <td><%= rs.getDouble("Bsalary") %></td>
+        <td>
+          <a href="empupdate.jsp?empno=<%= rs.getInt("Empno") %>">Edit</a> |
+          <a href="DeleteEmployeeServlet?empno=<%= rs.getInt("Empno") %>">Delete</a>
+        </td>
+      </tr>
+    <%
+        }
+        conn.close();
+      } catch (Exception e) {
+        out.println("<tr><td colspan='6'>Error: " + e.getMessage() + "</td></tr>");
+      }
+    %>
+  </table>
+</body>
+</html>

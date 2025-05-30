@@ -1,0 +1,53 @@
+package com.dao;
+
+import com.model.Employee;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = ""; // your password
+
+    public EmployeeDAO() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("MySQL Driver not found", e);
+        }
+    }
+
+    public boolean addEmployee(Employee emp) throws SQLException {
+        String sql = "INSERT INTO employees (empno, empname, doj, gender, bsalary) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, emp.getEmpno());
+            stmt.setString(2, emp.getEmpname());
+            stmt.setDate(3, Date.valueOf(emp.getDoj()));
+            stmt.setString(4, emp.getGender());
+            stmt.setDouble(5, emp.getBsalary());
+
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean deleteEmployee(int empno) throws SQLException {
+        String sql = "DELETE FROM employees WHERE empno = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, empno);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public List<Employee> getAllEmployees() throws SQLException {
+        String sql = "SELECT empno, empname, doj, gender, bsalary FROM employees";
+        List<Employee> list = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement

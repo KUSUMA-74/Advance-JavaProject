@@ -1,0 +1,38 @@
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        try {
+            Employee e = new Employee();
+            e.setEmpno(Integer.parseInt(req.getParameter("empno")));
+            e.setEmpName(req.getParameter("empname"));
+
+            // Normalize the date
+            String dojInput = req.getParameter("doj");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            sdf.setLenient(false); // Strict parsing
+            java.util.Date parsed = sdf.parse(dojInput);
+            String formattedDoj = new SimpleDateFormat("dd-MM-yyyy").format(parsed); // normalize
+            e.setDoj(formattedDoj);
+
+            e.setGender(req.getParameter("gender"));
+            e.setBsalary(Double.parseDouble(req.getParameter("bsalary")));
+
+            EmployeeDAO dao = new EmployeeDAO();
+            dao.addEmployee(e);
+
+            HttpSession session = req.getSession();
+            session.setAttribute("msg", "Employee added successfully.");
+            res.sendRedirect("DisplayEmployeeServlet");
+        } catch (ParseException ex) {
+            req.setAttribute("msg", "Invalid date format. Use dd-MM-yyyy.");
+            req.getRequestDispatcher("addemp.jsp").forward(req, res);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            req.setAttribute("msg", "Error adding employee.");
+            req.getRequestDispatcher("addemp.jsp").forward(req, res);
+        }
+    }
+}

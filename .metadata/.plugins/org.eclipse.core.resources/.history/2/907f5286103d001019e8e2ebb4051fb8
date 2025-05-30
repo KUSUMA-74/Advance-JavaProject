@@ -1,0 +1,67 @@
+package com.dao;
+
+import com.model.Employee;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+
+    private static final String URL = "jdbc:mysql://localhost:3306/yourdb";  // replace yourdb with actual DB name
+    private static final String USER = "yourusername";                      // replace with your DB username
+    private static final String PASSWORD = "yourpassword";                  // replace with your DB password
+
+    public List<Employee> getEmployeesByCriteria(String startDate, String endDate, Double minSalary, String gender) throws SQLException {
+        List<Employee> list = new ArrayList<>();
+
+        // Build dynamic SQL query with parameters
+        StringBuilder sql = new StringBuilder("SELECT empno, empname, doj, gender, bsalary FROM employees WHERE 1=1");
+
+        if (startDate != null && !startDate.isEmpty()) {
+            sql.append(" AND doj >= ?");
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            sql.append(" AND doj <= ?");
+        }
+        if (minSalary != null) {
+            sql.append(" AND bsalary >= ?");
+        }
+        if (gender != null && !gender.isEmpty()) {
+            sql.append(" AND gender = ?");
+        }
+
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+
+            if (startDate != null && !startDate.isEmpty()) {
+                ps.setString(paramIndex++, startDate);  // stored as String, so setString works
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                ps.setString(paramIndex++, endDate);
+            }
+            if (minSalary != null) {
+                ps.setDouble(paramIndex++, minSalary);
+            }
+            if (gender != null && !gender.isEmpty()) {
+                ps.setString(paramIndex++, gender);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Employee emp = new Employee();
+                    emp.setEmpno(rs.getInt("empno"));
+                    emp.setEmpname(rs.getString("empname"));
+                    emp.setDoj(rs.getString("doj"));
+                    emp.setGender(rs.getString("gender"));
+                    emp.setBsalary(rs.getDouble("bsalary"));
+                    list.add(emp);
+                }
+            }
+        }
+
+        return list;
+    }
+}

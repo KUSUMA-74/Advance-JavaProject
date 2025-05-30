@@ -1,0 +1,87 @@
+package com.dao;
+
+import com.model.Employee;
+import java.sql.*;
+import java.util.*;
+
+public class EmployeeDAO {
+    private String jdbcURL = "jdbc:mysql://localhost:3306/yourdb";
+    private String jdbcUsername = "root";
+    private String jdbcPassword = "yourpassword";
+
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+    }
+
+    public void addEmployee(Employee emp) throws SQLException {
+        String sql = "INSERT INTO Employee (Empno, EmpName, DoJ, Gender, Bsalary) VALUES (?, ?, ?, ?, ?)";
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, emp.getEmpno());
+            ps.setString(2, emp.getEmpName());
+            ps.setString(3, emp.getDoj());
+            ps.setString(4, emp.getGender());
+            ps.setDouble(5, emp.getBsalary());
+            ps.executeUpdate();
+        }
+    }
+
+    public List<Employee> getAllEmployees() throws SQLException {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT * FROM Employee";
+        try (Connection con = getConnection(); Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Employee e = new Employee(
+                    rs.getInt("Empno"),
+                    rs.getString("EmpName"),
+                    rs.getString("DoJ"),
+                    rs.getString("Gender"),
+                    rs.getDouble("Bsalary")
+                );
+                list.add(e);
+            }
+        }
+        return list;
+    }
+
+    public void deleteEmployee(int empno) throws SQLException {
+        String sql = "DELETE FROM Employee WHERE Empno=?";
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, empno);
+            ps.executeUpdate();
+        }
+    }
+
+    public void updateEmployee(Employee emp) throws SQLException {
+        String sql = "UPDATE Employee SET EmpName=?, DoJ=?, Gender=?, Bsalary=? WHERE Empno=?";
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, emp.getEmpName());
+            ps.setString(2, emp.getDoj());
+            ps.setString(3, emp.getGender());
+            ps.setDouble(4, emp.getBsalary());
+            ps.setInt(5, emp.getEmpno());
+            ps.executeUpdate();
+        }
+    }
+
+    public List<Employee> getEmployeesBySalaryRange(double min, double max) throws SQLException {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT * FROM Employee WHERE Bsalary BETWEEN ? AND ?";
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDouble(1, min);
+            ps.setDouble(2, max);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Employee e = new Employee(
+                        rs.getInt("Empno"),
+                        rs.getString("EmpName"),
+                        rs.getString("DoJ"),
+                        rs.getString("Gender"),
+                        rs.getDouble("Bsalary")
+                    );
+                    list.add(e);
+                }
+            }
+        }
+        return list;
+    }
+}

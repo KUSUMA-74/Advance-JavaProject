@@ -1,0 +1,8 @@
+<form action="UpdateEmployeeServlet" method="post">
+    Emp No (to update): <input name="empno" /><br/>
+    New Name: <input name="empname" /><br/>
+    New DOJ: <input name="doj" type="date" /><br/>
+    New Gender: <select name="gender"><option>Male</option><option>Female</option></select><br/>
+    New Salary: <input name="bsalary" /><br/>
+    <input type="submit" value="Update Employee" />
+</form>

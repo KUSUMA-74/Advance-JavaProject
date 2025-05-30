@@ -1,0 +1,25 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head><title>Add Employee</title></head>
+<body>
+<h2>Add Employee</h2>
+<form action="AddEmployeeServlet" method="post">
+    Emp No: <input type="text" name="empno" required><br>
+    Name: <input type="text" name="empname" required><br>
+    Date of Joining: <input type="text" name="doj" required><br>
+    Gender: <input type="text" name="gender" required><br>
+    Basic Salary: <input type="text" name="bsalary" required><br>
+    <input type="submit" value="Add Employee">
+</form>
+
+<%-- Display any messages --%>
+<%
+    String msg = (String) request.getAttribute("msg");
+    if (msg != null) {
+%>
+    <p style="color:green;"><%= msg %></p>
+<%
+    }
+%>
+</body>
+</html>

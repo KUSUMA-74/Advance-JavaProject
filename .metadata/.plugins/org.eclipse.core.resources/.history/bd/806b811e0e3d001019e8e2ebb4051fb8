@@ -1,0 +1,65 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Results</title>
+</head>
+<body>
+
+<h2>Report Results</h2>
+
+<%
+    String error = (String) request.getAttribute("error");
+    if (error != null) {
+%>
+    <p style="color: red;"><strong>Error:</strong> <%= error %></p>
+<%
+    }
+%>
+
+<%
+    List<Employee> employeeList = (List<Employee>) request.getAttribute("employeeList");
+
+    if (employeeList == null || employeeList.isEmpty()) {
+%>
+    <p>No employees found matching the criteria.</p>
+<%
+    } else {
+%>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Employee No</th>
+                <th>Name</th>
+                <th>Date of Joining</th>
+                <th>Gender</th>
+                <th>Basic Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (Employee emp : employeeList) { %>
+                <tr>
+                    <td><%= emp.getEmpno() %></td>
+                    <td><%= emp.getEmpname() %></td>
+                    <td><%= emp.getDoj() %></td>
+                    <td><%= emp.getGender() %></td>
+                    <td><%= String.format("%.2f", emp.getBsalary()) %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+<%
+    }
+%>
+
+<br/>
+<a href="report_form.jsp">Back to Report Criteria</a><br/>
+<a href="index.jsp">Back to Home</a>
+
+</body>
+</html>

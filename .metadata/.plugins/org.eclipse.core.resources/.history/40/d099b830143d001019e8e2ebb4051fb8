@@ -1,0 +1,173 @@
+package com.dao;
+
+import com.model.Employee;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+
+    private String jdbcURL = "jdbc:mysql://localhost:3306/your_database";
+    private String jdbcUsername = "your_username";
+    private String jdbcPassword = "your_password";
+
+    private static final String INSERT_EMPLOYEE_SQL = "INSERT INTO Employee (Empno, EmpName, DoJ, Gender, Bsalary) VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_EMPLOYEE_BY_ID = "SELECT * FROM Employee WHERE Empno = ?";
+    private static final String SELECT_ALL_EMPLOYEES = "SELECT * FROM Employee";
+    private static final String DELETE_EMPLOYEE_SQL = "DELETE FROM Employee WHERE Empno = ?";
+    private static final String UPDATE_EMPLOYEE_SQL = "UPDATE Employee SET EmpName = ?, DoJ = ?, Gender = ?, Bsalary = ? WHERE Empno = ?";
+
+    private static final String SELECT_EMPLOYEES_BY_CRITERIA = 
+        "SELECT * FROM Employee WHERE (? IS NULL OR EmpName LIKE ?) AND (? IS NULL OR Bsalary >= ?)";
+
+    public EmployeeDAO() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");  // MySQL 8+ driver
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+    }
+
+    // Insert Employee
+    public boolean insertEmployee(Employee emp) {
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(INSERT_EMPLOYEE_SQL)) {
+
+            ps.setInt(1, emp.getEmpno());
+            ps.setString(2, emp.getEmpName());
+            ps.setDate(3, emp.getDoj());
+            ps.setString(4, emp.getGender());
+            ps.setDouble(5, emp.getBsalary());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Select employee by id
+    public Employee selectEmployee(int empno) {
+        Employee emp = null;
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(SELECT_EMPLOYEE_BY_ID)) {
+
+            ps.setInt(1, empno);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String name = rs.getString("EmpName");
+                Date doj = rs.getDate("DoJ");
+                String gender = rs.getString("Gender");
+                double salary = rs.getDouble("Bsalary");
+                emp = new Employee(empno, name, doj, gender, salary);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return emp;
+    }
+
+    // Select all employees
+    public List<Employee> selectAllEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(SELECT_ALL_EMPLOYEES)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int empno = rs.getInt("Empno");
+                String name = rs.getString("EmpName");
+                Date doj = rs.getDate("DoJ");
+                String gender = rs.getString("Gender");
+                double salary = rs.getDouble("Bsalary");
+
+                employees.add(new Employee(empno, name, doj, gender, salary));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+
+    // Delete employee
+    public boolean deleteEmployee(int empno) {
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(DELETE_EMPLOYEE_SQL)) {
+
+            ps.setInt(1, empno);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Update employee
+    public boolean updateEmployee(Employee emp) {
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(UPDATE_EMPLOYEE_SQL)) {
+
+            ps.setString(1, emp.getEmpName());
+            ps.setDate(2, emp.getDoj());
+            ps.setString(3, emp.getGender());
+            ps.setDouble(4, emp.getBsalary());
+            ps.setInt(5, emp.getEmpno());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Get employees by criteria: EmpName LIKE and minimum salary filter
+    public List<Employee> getEmployeesByCriteria(String empName, Double minSalary) {
+        List<Employee> employees = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM Employee WHERE (? IS NULL OR EmpName LIKE ?) AND (? IS NULL OR Bsalary >= ?)")) {
+
+            if (empName == null || empName.trim().isEmpty()) {
+                ps.setNull(1, Types.VARCHAR);
+                ps.setNull(2, Types.VARCHAR);
+            } else {
+                ps.setString(1, empName);
+                ps.setString(2, "%" + empName + "%");
+            }
+
+            if (minSalary == null) {
+                ps.setNull(3, Types.DOUBLE);
+                ps.setNull(4, Types.DOUBLE);
+            } else {
+                ps.setDouble(3, minSalary);
+                ps.setDouble(4, minSalary);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int empno = rs.getInt("Empno");
+                String name = rs.getString("EmpName");
+                Date doj = rs.getDate("DoJ");
+                String gender = rs.getString("Gender");
+                double salary = rs.getDouble("Bsalary");
+
+                employees.add(new Employee(empno, name, doj, gender, salary));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+}

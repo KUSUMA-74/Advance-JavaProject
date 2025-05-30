@@ -1,0 +1,70 @@
+<%@ page import="java.sql.*, com.model.Employee" %>
+<%
+    int empno = Integer.parseInt(request.getParameter("empno"));
+
+    String url = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+    String user = "root";
+    String password = "";
+
+    Employee emp = null;
+
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String sql = "SELECT * FROM employees WHERE empno = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, empno);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    emp = new Employee();
+                    emp.setEmpno(rs.getInt("empno"));
+                    emp.setEmpname(rs.getString("empname"));
+                    emp.setDoj(rs.getDate("doj"));
+                    emp.setGender(rs.getString("gender"));
+                    emp.setBsalary(rs.getDouble("bsalary"));
+                }
+            }
+        }
+    } catch (Exception e) {
+        out.println("<p style='color:red;'>Error loading employee: " + e.getMessage() + "</p>");
+    }
+
+    if (emp == null) {
+%>
+    <p style="color:red;">Employee not found</p>
+<%
+    } else {
+%>
+<html>
+<head><title>Update Employee</title></head>
+<body>
+    <h2>Update Employee</h2>
+
+    <form action="UpdateEmployeeServlet" method="post">
+        <input type="hidden" name="empno" value="<%= emp.getEmpno() %>" />
+
+        <label>Name:</label>
+        <input type="text" name="empname" value="<%= emp.getEmpname() %>" required /><br/><br/>
+
+        <label>Date of Joining:</label>
+        <input type="date" name="doj" value="<%= emp.getDoj() %>" required /><br/><br/>
+
+        <label>Gender:</label>
+        <select name="gender" required>
+            <option value="Male" <%= emp.getGender().equals("Male") ? "selected" : "" %>>Male</option>
+            <option value="Female" <%= emp.getGender().equals("Female") ? "selected" : "" %>>Female</option>
+        </select><br/><br/>
+
+        <label>Basic Salary:</label>
+        <input type="number" name="bsalary" value="<%= emp.getBsalary() %>" required /><br/><br/>
+
+        <input type="submit" value="Update Employee" />
+    </form>
+
+    <br/>
+    <a href="DisplayEmployeeServlet">Back to List</a>
+</body>
+</html>
+<%
+    }
+%>

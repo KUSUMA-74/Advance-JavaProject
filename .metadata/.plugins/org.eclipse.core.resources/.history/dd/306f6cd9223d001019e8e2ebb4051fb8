@@ -1,0 +1,20 @@
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Employee emp = new Employee();
+        emp.setEmpno(Integer.parseInt(req.getParameter("empno")));
+        emp.setEmpName(req.getParameter("empName"));
+        emp.setDoj(req.getParameter("doj"));
+        emp.setGender(req.getParameter("gender"));
+        emp.setBsalary(Double.parseDouble(req.getParameter("bsalary")));
+
+        boolean success = new EmployeeDAO().addEmployee(emp);
+        HttpSession session = req.getSession();
+        if (success) {
+            session.setAttribute("msg", "Employee added successfully!");
+        } else {
+            session.setAttribute("msg", "Failed to add employee.");
+        }
+        res.sendRedirect("DisplayEmployeeServlet");
+    }
+}

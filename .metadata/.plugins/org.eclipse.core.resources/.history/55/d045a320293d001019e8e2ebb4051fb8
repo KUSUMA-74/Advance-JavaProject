@@ -1,0 +1,29 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.model.Employee" %>
+<html>
+<head>
+    <title>Update Employee</title>
+</head>
+<body>
+<h2 align="center">Update Employee Details</h2>
+<%
+    Employee emp = (Employee) request.getAttribute("emp");
+    if (emp != null) {
+%>
+<form method="post" action="UpdateEmployeeServlet" style="width:300px; margin:auto;">
+    <input type="hidden" name="empno" value="<%= emp.getEmpno() %>" />
+    Name: <input type="text" name="empname" value="<%= emp.getEmpName() %>" required /><br><br>
+    DoJ: <input type="text" name="doj" value="<%= emp.getDoj() %>" required /><br><br>
+    Gender: <input type="text" name="gender" value="<%= emp.getGender() %>" required /><br><br>
+    Salary: <input type="text" name="salary" value="<%= emp.getBsalary() %>" required /><br><br>
+    <input type="submit" value="Update Employee" />
+</form>
+<%
+    } else {
+%>
+    <p style="color:red; text-align:center;">Employee details not found.</p>
+<%
+    }
+%>
+</body>
+</html>

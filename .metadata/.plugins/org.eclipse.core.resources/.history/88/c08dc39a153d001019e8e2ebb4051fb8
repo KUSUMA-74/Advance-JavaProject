@@ -1,0 +1,26 @@
+package com.model;
+
+import java.sql.Date;
+
+public class Employee {
+    private int empno;
+    private String empName;
+    private Date doj;
+    private String gender;
+    private double bsalary;
+
+    public Employee(int empno, String empName, Date doj, String gender, double bsalary) {
+        this.empno = empno;
+        this.empName = empName;
+        this.doj = doj;
+        this.gender = gender;
+        this.bsalary = bsalary;
+    }
+
+    // getters
+    public int getEmpno() { return empno; }
+    public String getEmpName() { return empName; }
+    public Date getDoj() { return doj; }
+    public String getGender() { return gender; }
+    public double getBsalary() { return bsalary; }
+}

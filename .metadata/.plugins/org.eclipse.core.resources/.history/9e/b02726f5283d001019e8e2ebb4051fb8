@@ -1,0 +1,72 @@
+package com;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@WebServlet("/AddEmployeeServlet")
+public class AddEmployeeServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String empno = request.getParameter("empno");
+        String empname = request.getParameter("empname");
+        String doj = request.getParameter("doj");
+        String gender = request.getParameter("gender");
+        String bsalary = request.getParameter("bsalary");
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/EmployeeDB", "root", "");
+
+            String sql = "INSERT INTO Employee VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, Integer.parseInt(empno));
+            ps.setString(2, empname);
+            ps.setString(3, doj);
+            ps.setString(4, gender);
+            ps.setDouble(5, Double.parseDouble(bsalary));
+
+            int result = ps.executeUpdate();
+
+            if (result > 0) {
+                request.setAttribute("msg", "Employee added successfully.");
+            } else {
+                request.setAttribute("msg", "Error adding employee.");
+            }
+
+            // Now fetch all employees and forward to display JSP
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM Employee");
+
+            List<Employee> list = new ArrayList<>();
+            while (rs.next()) {
+                Employee e = new Employee();
+                e.setEmpno(rs.getInt("Empno"));
+                e.setEmpName(rs.getString("EmpName"));
+                e.setDoj(rs.getString("DoJ"));
+                e.setGender(rs.getString("Gender"));
+                e.setBsalary(rs.getDouble("Bsalary"));
+                list.add(e);
+            }
+
+            request.setAttribute("employees", list);
+            con.close();
+
+            RequestDispatcher rd = request.getRequestDispatcher("empdisplay.jsp");
+            rd.forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error adding employee: " + e.getMessage());
+            RequestDispatcher rd = request.getRequestDispatcher("empadd.jsp");
+            rd.forward(request, response);
+        }
+    }
+}

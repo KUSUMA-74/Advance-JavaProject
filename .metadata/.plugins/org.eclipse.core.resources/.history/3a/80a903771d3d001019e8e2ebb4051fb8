@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee List</title>
+</head>
+<body>
+
+<% String msg = (String) request.getAttribute("msg");
+   if (msg != null) { %>
+    <p style="color:green;"><%= msg %></p>
+<% } %>
+
+<%
+    List<Employee> employees = (List<Employee>) request.getAttribute("employees");
+    if (employees != null && !employees.isEmpty()) {
+%>
+    <table border="1">
+        <tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Actions</th>
+        </tr>
+<%
+        for (Employee emp : employees) {
+%>
+        <tr>
+            <td><%= emp.getId() %></td>
+            <td><%= emp.getName() %></td>
+            <td><%= emp.getEmail() %></td>
+            <td><%= emp.getDepartment() %></td>
+            <td>
+                <a href="EditEmployeeServlet?id=<%= emp.getId() %>">Edit</a> |
+                <a href="DeleteEmployeeServlet?id=<%= emp.getId() %>">Delete</a>
+            </td>
+        </tr>
+<%
+        }
+    } else {
+%>
+    <p>No employee records found.</p>
+<%
+    }
+%>
+    </table>
+
+</body>
+</html>

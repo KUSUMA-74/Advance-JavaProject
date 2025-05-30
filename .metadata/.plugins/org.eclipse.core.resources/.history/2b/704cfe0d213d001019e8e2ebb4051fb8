@@ -1,0 +1,20 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head><title>Update Employee</title></head>
+<body>
+<h2>Update Employee</h2>
+<form action="UpdateEmployeeServlet" method="post">
+    <input type="hidden" name="empno" value="${employee.empno}" />
+    Name: <input type="text" name="empName" value="${employee.empName}" required /><br>
+    Date of Joining: <input type="date" name="doj" value="${employee.doj}" required /><br>
+    Gender:
+    <select name="gender">
+        <option value="Male" ${employee.gender == 'Male' ? 'selected' : ''}>Male</option>
+        <option value="Female" ${employee.gender == 'Female' ? 'selected' : ''}>Female</option>
+    </select><br>
+    Salary: <input type="number" name="bsalary" step="0.01" value="${employee.bsalary}" required /><br>
+    <input type="submit" value="Update" />
+</form>
+</body>
+</html>

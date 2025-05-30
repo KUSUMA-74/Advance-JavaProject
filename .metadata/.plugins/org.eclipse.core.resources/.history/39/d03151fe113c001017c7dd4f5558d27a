@@ -1,0 +1,74 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*, com.model.Employee" %>
+<html>
+<head>
+    <title>Employee List</title>
+</head>
+<body>
+    <h2>All Employees</h2>
+
+    <!-- Display success or error messages -->
+    <%
+        String message = (String) request.getAttribute("message");
+        String error = (String) request.getAttribute("error");
+
+        if (message != null) {
+    %>
+        <p style="color:green;"><%= message %></p>
+    <%
+        } else if (error != null) {
+    %>
+        <p style="color:red;"><%= error %></p>
+    <%
+        }
+
+        // Retrieve employee list safely
+        Object empObj = request.getAttribute("employeeList");
+        List<Employee> employeeList = null;
+        if (empObj != null && empObj instanceof List<?>) {
+            employeeList = (List<Employee>) empObj;
+        }
+    %>
+
+    <!-- Employee Table -->
+    <table border="1">
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+            <th>Actions</th>
+        </tr>
+
+        <%
+            if (employeeList != null && !employeeList.isEmpty()) {
+                for (Employee emp : employeeList) {
+        %>
+        <tr>
+            <td><%= emp.getEmpno() %></td>
+            <td><%= emp.getEmpname() %></td>
+            <td><%= emp.getDoj() %></td>
+            <td><%= emp.getGender() %></td>
+            <td><%= emp.getBsalary() %></td>
+            <td>
+                <a href="empupdate.jsp?empno=<%= emp.getEmpno() %>">Update</a> |
+                <a href="DeleteEmployeeServlet?empno=<%= emp.getEmpno() %>" onclick="return confirm('Are you sure you want to delete this employee?')">Delete</a>
+            </td>
+        </tr>
+        <%
+                }
+            } else {
+        %>
+        <tr>
+            <td colspan="6">No employees found.</td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+
+    <br/>
+    <a href="empadd.jsp">Add New Employee</a>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<%@ page import="com.model.Employee" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Update Employee</title>
+    <style>
+        form {
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+        label, input, select {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2 align="center">Update Employee</h2>
+
+<%
+    Employee emp = (Employee) request.getAttribute("employee");
+    if (emp == null) {
+%>
+    <p style="color: red; text-align: center;">Employee not found.</p>
+<%
+    } else {
+%>
+    <form action="UpdateEmployeeServlet" method="post">
+        <label>Employee Number:</label>
+        <input type="text" name="empno" value="<%= emp.getEmpno() %>" readonly>
+
+        <label>Employee Name:</label>
+        <input type="text" name="empName" value="<%= emp.getEmpName() %>" required>
+
+        <label>Date of Joining:</label>
+        <input type="date" name="doj" value="<%= emp.getDoj() %>" required>
+
+        <label>Gender:</label>
+        <select name="gender" required>
+            <option value="Male" <%= "Male".equals(emp.getGender()) ? "selected" : "" %>>Male</option>
+            <option value="Female" <%= "Female".equals(emp.getGender()) ? "selected" : "" %>>Female</option>
+        </select>
+
+        <label>Basic Salary:</label>
+        <input type="number" name="bsalary" step="0.01" value="<%= emp.getBsalary() %>" required>
+
+        <input type="submit" value="Update">
+    </form>
+<%
+    }
+%>
+
+</body>
+</html>

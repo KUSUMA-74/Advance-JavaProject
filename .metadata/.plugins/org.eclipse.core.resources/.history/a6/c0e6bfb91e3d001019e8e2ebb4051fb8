@@ -1,0 +1,30 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+import java.io.IOException;
+import java.util.List;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+@WebServlet("/DisplayEmployeeServlet")
+public class DisplayEmployeeServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        List<Employee> list = new EmployeeDAO().getAllEmployees();
+        req.setAttribute("employees", list);
+
+        // Get the message from session if exists and forward to JSP
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            String msg = (String) session.getAttribute("msg");
+            if (msg != null) {
+                req.setAttribute("msg", msg);
+                session.removeAttribute("msg"); // remove to show once
+            }
+        }
+
+        RequestDispatcher rd = req.getRequestDispatcher("empdisplay.jsp");
+        rd.forward(req, res);
+    }
+}

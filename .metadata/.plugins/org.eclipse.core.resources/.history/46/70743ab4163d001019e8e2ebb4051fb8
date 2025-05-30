@@ -1,0 +1,48 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<%
+    List<Employee> reportResults = (List<Employee>) request.getAttribute("reportResults");
+%>
+<html>
+<head>
+    <title>Report Results</title>
+</head>
+<body>
+<h2>Employee Report Results</h2>
+
+<%
+    if (reportResults == null || reportResults.isEmpty()) {
+%>
+    <p>No employees found matching the criteria.</p>
+<%
+    } else {
+%>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Empno</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+        </tr>
+        <%
+            for (Employee emp : reportResults) {
+        %>
+        <tr>
+            <td><%= emp.getEmpno() %></td>
+            <td><%= emp.getEmpName() %></td>
+            <td><%= emp.getDoj() %></td>
+            <td><%= emp.getGender() %></td>
+            <td><%= String.format("%.2f", emp.getBsalary()) %></td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+<%
+    }
+%>
+<br/>
+<a href="report_form.jsp">Back to Report Form</a> | <a href="index.jsp">Home</a>
+</body>
+</html>

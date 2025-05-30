@@ -1,0 +1,80 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Employee</title>
+    <style>
+        body {
+            background-color: #121821;
+            font-family: Arial, sans-serif;
+            color: #e0e6e9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+        h2 {
+            color: #00bfa6;
+        }
+        form {
+            background-color: #1e2a38;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        input[type="number"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="number"] {
+            background-color: #2a3b4d;
+            color: #e0e6e9;
+        }
+        input[type="submit"] {
+            background-color: #00bfa6;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        a {
+            margin-top: 20px;
+            display: inline-block;
+            color: #00e6b8;
+            text-decoration: none;
+        }
+        p {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Delete Employee</h2>
+
+    <form action="DeleteEmployeeServlet" method="get">
+        <label>Enter Employee Number to Delete:</label>
+        <input type="number" name="empno" required />
+        <input type="submit" value="Delete Employee" />
+    </form>
+
+    <a href="empdisplay.jsp">← Back to Employee List</a>
+
+    <% String message = request.getParameter("message");
+       String error = request.getParameter("error");
+       if (message != null) { %>
+         <p style="color: #00e676;"><%= message %></p>
+    <% } else if (error != null) { %>
+         <p style="color: #ff5252;"><%= error %></p>
+    <% } %>
+</body>
+</html>

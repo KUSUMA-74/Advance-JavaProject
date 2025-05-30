@@ -1,0 +1,82 @@
+package com.servlet;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.model.Employee;
+
+@WebServlet("/ReportServlet")
+public class ReportServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    // DB connection info — adjust as needed
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/your_database_name";
+    private static final String DB_USER = "your_db_user";
+    private static final String DB_PASSWORD = "your_db_password";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        ArrayList<Employee> employeeList = new ArrayList<>();
+        int totalEmployees = 0;
+        double averageSalary = 0.0;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+                // Fetch all employees
+                String sql = "SELECT empno, empname, doj, gender, bsalary FROM employees";
+                try (PreparedStatement stmt = conn.prepareStatement(sql);
+                     ResultSet rs = stmt.executeQuery()) {
+
+                    while (rs.next()) {
+                        Employee emp = new Employee();
+                        emp.setEmpno(rs.getInt("empno"));
+                        emp.setEmpname(rs.getString("empname"));
+                        emp.setDoj(rs.getDate("doj"));
+                        emp.setGender(rs.getString("gender"));
+                        emp.setBsalary(rs.getDouble("bsalary"));
+
+                        employeeList.add(emp);
+                    }
+                }
+
+                // Get total count and average salary
+                String statsSql = "SELECT COUNT(*) AS total, AVG(bsalary) AS avgSalary FROM employees";
+                try (PreparedStatement statsStmt = conn.prepareStatement(statsSql);
+                     ResultSet statsRs = statsStmt.executeQuery()) {
+
+                    if (statsRs.next()) {
+                        totalEmployees = statsRs.getInt("total");
+                        averageSalary = statsRs.getDouble("avgSalary");
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("report.jsp").forward(request, response);
+            return;
+        }
+
+        // Set attributes for JSP
+        request.setAttribute("employeeList", employeeList);
+        request.setAttribute("totalEmployees", totalEmployees);
+        request.setAttribute("averageSalary", averageSalary);
+
+        request.getRequestDispatcher("report.jsp").forward(request, response);
+    }
+}

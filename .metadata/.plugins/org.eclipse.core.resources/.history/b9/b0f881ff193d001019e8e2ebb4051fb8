@@ -1,0 +1,17 @@
+<%@ page import="java.util.*, com.model.Employee" %>
+<%@ page import="com.dao.EmployeeDAO" %>
+<%
+    List<Employee> list = new EmployeeDAO().getAllEmployees();
+%>
+<table border="1">
+<tr><th>Emp No</th><th>Name</th><th>DOJ</th><th>Gender</th><th>Salary</th></tr>
+<% for(Employee e : list) { %>
+<tr>
+    <td><%= e.getEmpno() %></td>
+    <td><%= e.getEmpName() %></td>
+    <td><%= e.getDoj() %></td>
+    <td><%= e.getGender() %></td>
+    <td><%= e.getBsalary() %></td>
+</tr>
+<% } %>
+</table>

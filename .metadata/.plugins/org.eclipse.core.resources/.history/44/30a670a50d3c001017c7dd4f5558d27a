@@ -1,0 +1,91 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #555;
+            text-align: center;
+        }
+        th {
+            background-color: #eee;
+        }
+        h2 {
+            text-align: center;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        .back-link {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Employee List</h2>
+
+<%
+    String error = (String) request.getAttribute("error");
+    if (error != null) {
+%>
+    <p class="error"><strong>Error:</strong> <%= error %></p>
+<%
+    }
+%>
+
+<%
+    List<Employee> employeeList = (List<Employee>) request.getAttribute("employeeList");
+
+    if (employeeList == null || employeeList.isEmpty()) {
+%>
+    <p style="text-align: center;">No employees found.</p>
+<%
+    } else {
+%>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee No</th>
+                <th>Name</th>
+                <th>Date of Joining</th>
+                <th>Gender</th>
+                <th>Basic Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (Employee emp : employeeList) { %>
+                <tr>
+                    <td><%= emp.getEmpno() %></td>
+                    <td><%= emp.getEmpname() %></td>
+                    <td><%= emp.getDoj() %></td>
+                    <td><%= emp.getGender() %></td>
+                    <td><%= String.format("%.2f", emp.getBsalary()) %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+<%
+    }
+%>
+
+<div class="back-link">
+    <a href="index.jsp">Back to Home</a>
+</div>
+
+</body>
+</html>

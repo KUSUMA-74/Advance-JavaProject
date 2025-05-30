@@ -1,0 +1,90 @@
+package com.dao;
+
+import com.model.Employee;
+import java.sql.*;
+import java.util.*;
+
+public class EmployeeDAO {
+    private static final String URL = "jdbc:mysql://localhost:3306/your_database";
+    private static final String USER = "root";
+    private static final String PASS = "password";
+
+    private Connection getConnection() throws Exception {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(URL, USER, PASS);
+    }
+
+    public boolean addEmployee(Employee e) {
+        try (Connection conn = getConnection()) {
+            String sql = "INSERT INTO Employee VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, e.getEmpno());
+            ps.setString(2, e.getEmpName());
+            ps.setString(3, e.getDoj());
+            ps.setString(4, e.getGender());
+            ps.setDouble(5, e.getBsalary());
+            return ps.executeUpdate() > 0;
+        } catch (Exception ex) { ex.printStackTrace(); return false; }
+    }
+
+    public boolean updateEmployee(Employee e) {
+        try (Connection conn = getConnection()) {
+            String sql = "UPDATE Employee SET EmpName=?, DoJ=?, Gender=?, Bsalary=? WHERE Empno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, e.getEmpName());
+            ps.setString(2, e.getDoj());
+            ps.setString(3, e.getGender());
+            ps.setDouble(4, e.getBsalary());
+            ps.setInt(5, e.getEmpno());
+            return ps.executeUpdate() > 0;
+        } catch (Exception ex) { ex.printStackTrace(); return false; }
+    }
+
+    public boolean deleteEmployee(int empno) {
+        try (Connection conn = getConnection()) {
+            String sql = "DELETE FROM Employee WHERE Empno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, empno);
+            return ps.executeUpdate() > 0;
+        } catch (Exception ex) { ex.printStackTrace(); return false; }
+    }
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> list = new ArrayList<>();
+        try (Connection conn = getConnection()) {
+            String sql = "SELECT * FROM Employee";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employee e = new Employee();
+                e.setEmpno(rs.getInt("Empno"));
+                e.setEmpName(rs.getString("EmpName"));
+                e.setDoj(rs.getString("DoJ"));
+                e.setGender(rs.getString("Gender"));
+                e.setBsalary(rs.getDouble("Bsalary"));
+                list.add(e);
+            }
+        } catch (Exception ex) { ex.printStackTrace(); }
+        return list;
+    }
+
+    public List<Employee> getEmployeesByGender(String gender) {
+        List<Employee> list = new ArrayList<>();
+        try (Connection conn = getConnection()) {
+            String sql = "SELECT * FROM Employee WHERE Gender=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, gender);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employee e = new Employee();
+                e.setEmpno(rs.getInt("Empno"));
+                e.setEmpName(rs.getString("EmpName"));
+                e.setDoj(rs.getString("DoJ"));
+                e.setGender(rs.getString("Gender"));
+                e.setBsalary(rs.getDouble("Bsalary"));
+                list.add(e);
+            }
+        } catch (Exception ex) { ex.printStackTrace(); }
+        return list;
+    }
+}   for this code make changes 

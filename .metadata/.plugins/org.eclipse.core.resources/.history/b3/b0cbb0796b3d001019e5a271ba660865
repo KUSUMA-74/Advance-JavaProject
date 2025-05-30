@@ -1,0 +1,82 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Salary Report</title>
+    <style>
+        body {
+            background-color: #121821;
+            color: #e0e6e9;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #00bfa6;
+        }
+        form {
+            background-color: #1e2a38;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 6px;
+            background-color: #2e3c50;
+            color: white;
+            font-size: 14px;
+        }
+        input[type=submit] {
+            background-color: #00bfa6;
+            color: black;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        a {
+            margin-top: 20px;
+            color: #00e6b8;
+            text-decoration: none;
+        }
+        .error {
+            margin-top: 20px;
+            color: #ff5252;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Generate Salary Report</h2>
+
+    <form action="report_result.jsp" method="get">
+        <label for="salary">Enter Minimum Salary:</label>
+        <input type="number" name="salary" id="salary" step="0.01" required />
+
+        <input type="submit" value="Show Report" />
+    </form>
+
+    <% 
+       String error = request.getParameter("error");
+       if (error != null) {
+    %>
+       <p class="error"><%= error %></p>
+    <%
+       }
+    %>
+
+    <a href="empdisplay.jsp">← Back to Employee List</a>
+</body>
+</html>

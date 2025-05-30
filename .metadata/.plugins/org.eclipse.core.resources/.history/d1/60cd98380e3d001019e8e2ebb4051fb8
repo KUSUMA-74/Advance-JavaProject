@@ -1,0 +1,102 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h2, h3 {
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            width: 80%;
+        }
+        th, td {
+            padding: 10px 15px;
+            border: 1px solid #666;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .summary {
+            text-align: center;
+            margin: 20px auto;
+            width: 80%;
+        }
+        .back-link {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Employee Report</h2>
+
+<%
+    String error = (String) request.getAttribute("error");
+    if (error != null) {
+%>
+    <p style="color:red; text-align:center;"><strong>Error:</strong> <%= error %></p>
+<%
+    }
+%>
+
+<%
+    List<Employee> employeeList = (List<Employee>) request.getAttribute("employeeList");
+    Integer totalEmployees = (Integer) request.getAttribute("totalEmployees");
+    Double averageSalary = (Double) request.getAttribute("averageSalary");
+
+    if (employeeList == null || employeeList.isEmpty()) {
+%>
+    <p style="text-align:center;">No employee data found.</p>
+<%
+    } else {
+%>
+
+    <div class="summary">
+        <h3>Total Employees: <%= totalEmployees != null ? totalEmployees : 0 %></h3>
+        <h3>Average Salary: $<%= averageSalary != null ? String.format("%.2f", averageSalary) : "0.00" %></h3>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee No</th>
+                <th>Name</th>
+                <th>Date of Joining</th>
+                <th>Gender</th>
+                <th>Basic Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (Employee emp : employeeList) { %>
+                <tr>
+                    <td><%= emp.getEmpno() %></td>
+                    <td><%= emp.getEmpname() %></td>
+                    <td><%= emp.getDoj() %></td>
+                    <td><%= emp.getGender() %></td>
+                    <td><%= String.format("%.2f", emp.getBsalary()) %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+<%
+    }
+%>
+
+<div class="back-link">
+    <a href="index.jsp">Back to Home</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*, com.model.Employee" %>
+<html>
+<head><title>All Employees</title></head>
+<body>
+    <h2>All Employees</h2>
+
+    <table border="1">
+        <tr>
+            <th>Emp No</th>
+            <th>Name</th>
+            <th>Date of Joining</th>
+            <th>Gender</th>
+            <th>Basic Salary</th>
+            <th>Actions</th>
+        </tr>
+        <%
+            List<Employee> employeeList = (List<Employee>) request.getAttribute("employeeList");
+            if (employeeList != null && !employeeList.isEmpty()) {
+                for (Employee emp : employeeList) {
+        %>
+        <tr>
+            <td><%= emp.getEmpno() %></td>
+            <td><%= emp.getEmpname() %></td>
+            <td><%= emp.getDoj() %></td>
+            <td><%= emp.getGender() %></td>
+            <td><%= emp.getBsalary() %></td>
+            <td>
+                <a href="empupdate.jsp?empno=<%= emp.getEmpno() %>">Update</a> |
+                <a href="DeleteEmployeeServlet?empno=<%= emp.getEmpno() %>" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        <%
+                }
+            } else {
+        %>
+        <tr>
+            <td colspan="6">No employee records found.</td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+
+    <br/>
+    <a href="empadd.jsp">Add New Employee</a>
+</body>
+</html>

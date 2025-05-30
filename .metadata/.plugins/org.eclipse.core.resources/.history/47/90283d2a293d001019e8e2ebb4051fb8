@@ -1,0 +1,42 @@
+package com.servlet;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
+
+@WebServlet("/DeleteEmployeeServlet")
+public class DeleteEmployeeServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int empno = Integer.parseInt(request.getParameter("empno"));
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/EmployeeDB", "root", "");
+            PreparedStatement ps = con.prepareStatement("DELETE FROM Employee WHERE Empno=?");
+            ps.setInt(1, empno);
+
+            int status = ps.executeUpdate();
+            con.close();
+
+            if (status > 0) {
+                request.setAttribute("msg", "Employee deleted successfully!");
+            } else {
+                request.setAttribute("msg", "Failed to delete employee.");
+            }
+
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayEmployeeServlet");
+            rd.forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error deleting employee.");
+            RequestDispatcher rd = request.getRequestDispatcher("DisplayEmployeeServlet");
+            rd.forward(request, response);
+        }
+    }
+}

@@ -1,0 +1,12 @@
+<html>
+<head><title>Report Criteria</title></head>
+<body>
+<h2>Generate Employee Report</h2>
+<form action="ReportCriteriaServlet" method="post">
+    Department: <input type="text" name="department" placeholder="Leave blank for all"/><br/>
+    Minimum Salary: <input type="number" step="0.01" name="minSalary" placeholder="Leave blank for no min"/><br/>
+    <input type="submit" value="Generate Report"/>
+</form>
+<a href="index.jsp">Back to Home</a>
+</body>
+</html>

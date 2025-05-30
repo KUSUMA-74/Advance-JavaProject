@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Reports</title>
+</head>
+<body>
+    <h2>Employee Reports</h2>
+    <ul>
+        <li><a href="report_form.jsp">Generate Report by Salary</a></li>
+        <!-- Add more links as needed -->
+    </ul>
+</body>
+</html>

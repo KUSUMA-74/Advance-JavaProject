@@ -1,0 +1,113 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Salary Report by EmpNo</title>
+    <style>
+        body {
+            background-color: #ffe6f0;
+            color: #5a2a41;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #d63384;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            background-color: #fff0f5;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(214, 51, 132, 0.2);
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ffb3d1;
+        }
+        th {
+            background-color: #d63384;
+            color: white;
+        }
+        td {
+            color: #5a2a41;
+        }
+        a {
+            margin-top: 30px;
+            color: #cc6699;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .error {
+            margin-top: 20px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Employee Salary Report by Employee Number</h2>
+
+    <%
+        String empnoStr = request.getParameter("empno");
+        if (empnoStr == null || empnoStr.trim().isEmpty()) {
+    %>
+        <p class="error">Please enter an Employee Number.</p>
+    <%
+        } else {
+            try {
+                int empno = Integer.parseInt(empnoStr);
+                String dbURL = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&serverTimezone=UTC";
+                String dbUser = "root";
+                String dbPass = ""; // Your password
+
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+
+                String query = "SELECT empno, bsalary FROM employees WHERE empno = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, empno);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+    %>
+        <table>
+            <tr>
+                <th>Emp No</th>
+                <th>Basic Salary</th>
+            </tr>
+            <tr>
+                <td><%= rs.getInt("empno") %></td>
+                <td><%= rs.getDouble("bsalary") %></td>
+            </tr>
+        </table>
+    <%
+                } else {
+    %>
+        <p class="error">No employee found with Employee Number: <%= empno %></p>
+    <%
+                }
+
+                rs.close();
+                stmt.close();
+                conn.close();
+
+            } catch (NumberFormatException e) {
+    %>
+        <p class="error">Invalid Employee Number format.</p>
+    <%
+            } catch (Exception e) {
+    %>
+        <p class="error">Error: <%= e.getMessage() %></p>
+    <%
+            }
+        }
+    %>
+
+    <a href="report_form.jsp">← Back to Report Form</a>
+</body>
+</html>

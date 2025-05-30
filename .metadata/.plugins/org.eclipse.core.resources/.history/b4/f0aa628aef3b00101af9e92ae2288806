@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Employee</title>
+</head>
+<body>
+
+<h2>Add New Employee</h2>
+
+<form action="AddEmployeeServlet" method="post">
+    <label>Employee No:</label><br/>
+    <input type="number" name="empno" required /><br/><br/>
+
+    <label>Employee Name:</label><br/>
+    <input type="text" name="empname" required /><br/><br/>
+
+    <label>Date of Joining:</label><br/>
+    <input type="date" name="doj" required /><br/><br/>
+
+    <label>Gender:</label><br/>
+    <select name="gender" required>
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select><br/><br/>
+
+    <label>Basic Salary:</label><br/>
+    <input type="number" name="bsalary" step="0.01" required /><br/><br/>
+
+    <label>Department:</label><br/>
+    <input type="text" name="department" /><br/><br/>
+
+    <input type="submit" value="Add Employee" />
+</form>
+
+<br/>
+<a href="index.jsp">Back to Home</a>
+
+</body>
+</html>

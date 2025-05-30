@@ -1,0 +1,14 @@
+<html>
+<head>
+    <title>Employee Reports</title>
+</head>
+<body>
+    <h2>Employee Reports</h2>
+    <ul>
+        <li><a href="report_form.jsp">Generate Employee Report</a></li>
+        <!-- You can add more report links here in the future -->
+    </ul>
+    <br/>
+    <a href="index.jsp">Back to Home</a>
+</body>
+</html>

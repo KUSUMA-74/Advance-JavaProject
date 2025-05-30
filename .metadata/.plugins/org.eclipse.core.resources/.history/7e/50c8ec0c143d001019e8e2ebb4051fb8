@@ -1,0 +1,40 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Employee" %>
+<%
+    List<Employee> employees = (List<Employee>) request.getAttribute("employeeList");
+%>
+<html>
+<head><title>Employee List</title></head>
+<body>
+<h2>Employees</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <tr>
+        <th>Empno</th>
+        <th>Name</th>
+        <th>Date of Joining</th>
+        <th>Gender</th>
+        <th>Basic Salary</th>
+    </tr>
+    <%
+        if (employees != null && !employees.isEmpty()) {
+            for (Employee emp : employees) {
+    %>
+    <tr>
+        <td><%= emp.getEmpno() %></td>
+        <td><%= emp.getEmpName() %></td>
+        <td><%= emp.getDoj() %></td>
+        <td><%= emp.getGender() %></td>
+        <td><%= emp.getBsalary() %></td>
+    </tr>
+    <%
+            }
+        } else {
+    %>
+    <tr><td colspan="5">No Employees found.</td></tr>
+    <%
+        }
+    %>
+</table>
+<a href="index.jsp">Back to Home</a>
+</body>
+</html>

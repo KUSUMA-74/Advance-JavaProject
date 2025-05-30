@@ -1,0 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<html>
+<head><title>Report Criteria</title></head>
+<body>
+    <h2>Select Report Criteria</h2>
+    <form action="ReportServlet" method="post">
+        Minimum Salary: <input type="number" step="0.01" name="minSalary" required><br>
+        <input type="submit" value="Generate Report">
+    </form>
+</body>
+</html>

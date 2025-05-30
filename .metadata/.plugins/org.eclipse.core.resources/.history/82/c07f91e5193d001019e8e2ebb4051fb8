@@ -1,0 +1,17 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+@WebServlet("/DeleteEmployeeServlet")
+public class DeleteEmployeeServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        int empno = Integer.parseInt(req.getParameter("empno"));
+        EmployeeDAO dao = new EmployeeDAO();
+        dao.deleteEmployee(empno);
+        res.sendRedirect("empdisplay.jsp");
+    }
+}

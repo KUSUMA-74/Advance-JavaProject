@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Management System</title>
+</head>
+<body>
+    <h2>Welcome to Employee Management</h2>
+    <ul>
+        <li><a href="empadd.jsp">Add Employee</a></li>
+        <li><a href="empupdate.jsp">Update Employee</a></li>
+        <li><a href="empdelete.jsp">Delete Employee</a></li>
+        <li><a href="empdisplay.jsp">Display Employee</a></li>
+        <li><a href="report_form.jsp">Generate Report</a></li>
+    </ul>
+</body>
+</html>

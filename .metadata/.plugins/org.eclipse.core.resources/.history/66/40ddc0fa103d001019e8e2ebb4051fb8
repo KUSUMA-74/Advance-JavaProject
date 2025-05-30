@@ -1,0 +1,23 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head><title>Report Criteria</title></head>
+<body>
+<h2>Select Report Criteria</h2>
+
+<form method="post" action="ReportServlet">
+    Start Date: <input type="date" name="startDate" required><br><br>
+    End Date: <input type="date" name="endDate" required><br><br>
+    Minimum Salary: <input type="number" step="0.01" name="minSalary"><br><br>
+    Gender:
+    <select name="gender">
+        <option value="">All</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select><br><br>
+    <input type="submit" value="Generate Report">
+</form>
+
+<a href="displayEmployees">Back to Employee List</a>
+</body>
+</html>

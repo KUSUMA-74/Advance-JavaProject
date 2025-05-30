@@ -1,0 +1,13 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<html>
+<head><title>Employee Reports</title></head>
+<body>
+    <h2>Reports Section</h2>
+    <p>Select a report criteria:</p>
+    <ul>
+        <li><a href="report_form.jsp">Report: Employees with Salary Above Threshold</a></li>
+    </ul>
+    <br>
+    <a href="index.jsp">Back to Home</a>
+</body>
+</html>

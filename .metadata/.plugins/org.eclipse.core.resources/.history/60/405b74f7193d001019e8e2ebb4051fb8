@@ -1,0 +1,20 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+import java.io.IOException;
+import java.util.List;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+@WebServlet("/ReportServlet")
+public class ReportServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String gender = req.getParameter("gender");
+        List<Employee> list = new EmployeeDAO().getEmployeesByGender(gender);
+        req.setAttribute("report", list);
+        RequestDispatcher rd = req.getRequestDispatcher("report_result.jsp");
+        rd.forward(req, res);
+    }
+}

@@ -1,0 +1,46 @@
+package com.servlet;
+
+import com.dao.EmployeeDAO;
+import com.model.Employee;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/ReportServlet")
+public class ReportServlet extends HttpServlet {
+
+    private EmployeeDAO dao;
+
+    @Override
+    public void init() {
+        dao = new EmployeeDAO();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            String startDate = request.getParameter("startDate");
+            String endDate = request.getParameter("endDate");
+            String minSalaryStr = request.getParameter("minSalary");
+            String gender = request.getParameter("gender");
+
+            Double minSalary = null;
+            if (minSalaryStr != null && !minSalaryStr.trim().isEmpty()) {
+                minSalary = Double.parseDouble(minSalaryStr);
+            }
+
+            List<Employee> reportList = dao.getEmployeesByCriteria(startDate, endDate, minSalary, gender);
+            request.setAttribute("reportList", reportList);
+            request.getRequestDispatcher("reportResult.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            request.setAttribute("message", "Error: " + e.getMessage());
+            request.getRequestDispatcher("reportCriteria.jsp").forward(request, response);
+        }
+    }
+}

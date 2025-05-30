@@ -1,0 +1,15 @@
+<%@ page import="java.sql.*, com.model.Employee" %>
+<%
+    String empnoStr = request.getParameter("empno");
+    if (empnoStr == null || empnoStr.trim().isEmpty()) {
+%>
+    <p style="color:red;">Employee number is missing from the request.</p>
+    <a href="DisplayEmployeeServlet">Back to List</a>
+</body>
+</html>
+<%
+        return;
+    }
+
+    int empno = Integer.parseInt(empnoStr);
+%>
